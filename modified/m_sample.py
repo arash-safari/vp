@@ -1,4 +1,5 @@
 import sys
+
 sys.path.append('../')
 
 import torch
@@ -22,10 +23,9 @@ def sample_model(model, device, batch, size, temperature, condition=None):
 
 
 def make_sample(model_vqvae, model_top, model_middle, model_bottom, _dir, filename, batch=16, device='cuda', temp=1.0):
-    
     top_sample = sample_model(model_top, device, batch, [32, 32], temp)
 
-    if model_middle != None :
+    if model_middle is not None:
         middle_sample = sample_model(
             model_middle, device, batch, [64, 64], temp, condition=top_sample
         )
@@ -37,12 +37,12 @@ def make_sample(model_vqvae, model_top, model_middle, model_bottom, _dir, filena
             model_bottom, device, batch, [64, 64], temp, condition=top_sample
         )
 
-    if model_middle != None :
+    if model_middle is not None:
         decoded_sample = model_vqvae.decode_code(top_sample, middle_sample, bottom_sample)
-    else :
+    else:
         decoded_sample = model_vqvae.decode_code(top_sample, bottom_sample)
 
     decoded_sample = decoded_sample.clamp(-1, 1)
 
     save_image(decoded_sample, _dir + filename,
-     normalize=True, range=(-1, 1))
+               normalize=True, range=(-1, 1))
