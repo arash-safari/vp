@@ -1,5 +1,5 @@
-from modified.m_sample import make_sample
-from modified.m_util import load_model
+from m_sample import make_sample
+from m_util import load_model
 
 dataset = 'mnist'
 n_run = 0

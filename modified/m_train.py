@@ -4,10 +4,10 @@ Created on Sat May  2 13:30:48 2020
 
 @author: Arash
 """
-from modified.m_util import conf_parser, model_object_parser, get_model_type, get_path, load_part
-from modified.consts import PIXELSNAIL, VQVAE, TOP, BOTTOM, MIDDLE
-from modified.m_train_pixelsnail import train as train_pixelsnail
-from modified.m_train_vqvae import train as train_vqvae
+from m_util import conf_parser, model_object_parser, get_model_type, get_path, load_part
+from consts import PIXELSNAIL, VQVAE, TOP, BOTTOM, MIDDLE
+from m_train_pixelsnail import train as train_pixelsnail
+from m_train_vqvae import train as train_vqvae
 from torch.utils.data import DataLoader
 from dataset import LMDBDataset
 from torch import optim, nn

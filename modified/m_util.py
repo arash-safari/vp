@@ -4,7 +4,7 @@ sys.path.append('../')
 import torch
 from vqvae import VQVAE
 from pixelsnail import PixelSNAIL
-from modified.m_conf_parser import model_option_parser, training_params_parser
+from m_conf_parser import model_option_parser, training_params_parser
 
 
 def get_sample_dir(dataset, n_run):
