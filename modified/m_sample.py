@@ -22,7 +22,7 @@ def sample_model(model, device, batch, size, temperature, condition=None):
     return row
 
 
-def make_sample(model_vqvae, model_top, model_middle, model_bottom, _dir, filename, batch=16, device='cuda', temp=1.0):
+def make_sample(model_vqvae, model_top, model_middle, model_bottom, file_path, batch=16, device='cuda', temp=1.0):
     top_sample = sample_model(model_top, device, batch, [32, 32], temp)
 
     if model_middle is not None:
@@ -44,5 +44,5 @@ def make_sample(model_vqvae, model_top, model_middle, model_bottom, _dir, filena
 
     decoded_sample = decoded_sample.clamp(-1, 1)
 
-    save_image(decoded_sample, _dir + filename,
+    save_image(decoded_sample, file_path,
                normalize=True, range=(-1, 1))
