@@ -6,6 +6,8 @@ from pixelsnail import PixelSNAIL
 def pixel_object(conf_path):
     config =  configparser.ConfigParser()
     config.read(conf_path)
+    print(conf_path)
+    print(config.sections())
     model = config['Model']
     return PixelSNAIL(
             shape = [model.getint('shape_height'), model.getint('shape_width')],
