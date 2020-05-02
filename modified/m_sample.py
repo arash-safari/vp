@@ -21,12 +21,7 @@ def sample_model(model, device, batch, size, temperature, condition=None):
     return row
 
 
-def make_sample(model, _dir, filename, batch=16, device='cuda', temp=1.0):
-
-    model_top = model['top']
-    model_middle = model['middle']
-    model_bottom = model['bottom']
-    model_vqvae = model['vqvae']
+def make_sample(model_vqvae, model_top, model_middle, model_bottom, _dir, filename, batch=16, device='cuda', temp=1.0):
     
     top_sample = sample_model(model_top, device, batch, [32, 32], temp)
 

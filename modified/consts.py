@@ -1,0 +1,5 @@
+PIXELSNAIL = 'pixelsnail'
+VQVAE = 'vqvae'
+TOP = 'top'
+BOTTOM = 'bottom'
+MIDDLE = 'middle'
