@@ -29,7 +29,7 @@ def get_scheduler(args, sched, optimizer, loader):
     return scheduler
 
 
-def train(dataset_path, n_run, folder_name, start_epoch, end_epoch, batch_size, sched, device='cuda', size=256, lr=-1,
+def train(dataset_path, n_run, folder_name, start_epoch, end_epoch, batch_size, sched=None, device='cuda', size=256, lr=-1,
           amp='O0'):
     model_type = get_model_type(folder_name)
     _, train_params = conf_parser(dataset_path, n_run, folder_name)
@@ -49,8 +49,8 @@ def train(dataset_path, n_run, folder_name, start_epoch, end_epoch, batch_size, 
     model = model.to(device)
 
     if model_type == PIXELSNAIL:
-        data_path = None
-        dataset = LMDBDataset(data_path)
+        lampda_name = '{}_{}'.format(*[dataset_path, n_run])
+        dataset = LMDBDataset(lampda_name)
         loader = DataLoader(
             dataset, batch_size=batch_size, shuffle=True, num_workers=4, drop_last=True
         )

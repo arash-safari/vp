@@ -1,9 +1,4 @@
-import argparse
-
-import numpy as np
-import torch
-from torch import nn, optim
-from torch.utils.data import DataLoader
+from torch import nn
 from tqdm import tqdm
 
 try:
@@ -12,11 +7,7 @@ try:
 except ImportError:
     amp = None
 
-from dataset import LMDBDataset
-from pixelsnail import PixelSNAIL
-from scheduler import CycleScheduler
 
-# folder_name, start_epoch, end_epoch, loader, model, optimizer, scheduler, device, file_path
 def train(args, epoch, loader, model, optimizer, scheduler, device):
     loader = tqdm(loader)
 
@@ -55,5 +46,3 @@ def train(args, epoch, loader, model, optimizer, scheduler, device):
                 f'acc: {accuracy:.5f}; lr: {lr:.5f}'
             )
         )
-
-
