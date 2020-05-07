@@ -39,7 +39,15 @@ def create_model_object(model_type, options):
             attention=options['attention']
         )
     elif model_type == 'vqvae':
-        return VQVAE()
+        return VQVAE(
+            in_channel=options['in_channel'],
+            channel=options['channel'],
+            n_res_block=options['n_res_block'],
+            n_res_channel=options['n_res_channel'],
+            embed_dim=options['embed_dim'],
+            n_embed=options['n_embed'],
+            decay=options['decay']
+        )
 
 
 def get_model_type(folder_name):

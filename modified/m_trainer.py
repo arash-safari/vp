@@ -44,7 +44,7 @@ def train(dataset_path, n_run, folder_name, start_epoch=-1, end_epoch=-1, batch_
         end_epoch = train_params['epoch']
     if batch_size < 0:
         batch_size = train_params['batch']
-    if amp == None and 'amp' in train_params:
+    if amp is None and 'amp' in train_params:
         amp = train_params['amp']
 
     optimizer = get_optimizer(model, lr)
