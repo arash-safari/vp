@@ -2,7 +2,7 @@ from torch import nn
 from tqdm import tqdm
 
 
-def train(epoch_num, loader, model, writer, do_sample, sampler, optimizer, scheduler, device, dataset_name, run_num):
+def train(folder_name, epoch_num, loader, model, writer, do_sample, sampler, optimizer, scheduler, device, dataset_name, run_num):
     loader = tqdm(loader)
 
     criterion = nn.MSELoss()
@@ -43,4 +43,4 @@ def train(epoch_num, loader, model, writer, do_sample, sampler, optimizer, sched
     writer.add_scalar('Loss/train', mse_sum / mse_n, epoch_num)
 
     if do_sample:
-        sampler(model, img, dataset_name, run_num, epoch_num, img.shape[0])
+        sampler(folder_name, model, img, dataset_name, run_num, epoch_num, img.shape[0])

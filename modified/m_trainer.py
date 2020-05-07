@@ -98,6 +98,6 @@ def train(folder_name, loader, dataset_name, n_run, sample_period, sampler, star
             sample_iter += 1
             do_sample = sample_period > 0 and sample_iter % sample_period ==0
 
-            train_vqvae(i, loader, model,writer , do_sample, sampler, optimizer, scheduler, device, dataset_name, n_run)
+            train_vqvae(folder_name, i, loader, model,writer , do_sample, sampler, optimizer, scheduler, device, dataset_name, n_run)
             save_path = get_path(dataset_name, n_run, model, folder_name, checkpoint=i)
             torch.save(model.state_dict(), save_path)

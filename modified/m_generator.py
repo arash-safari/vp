@@ -1,7 +1,7 @@
 from m_sample import make_sample
 from m_util import load_model
 
-dataset = 'mnist'
+dataset = 'fashion_mnist'
 n_run = 0
 vqvae_epoch = 378
 top_epoch = 89
