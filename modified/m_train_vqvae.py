@@ -1,24 +1,13 @@
-import argparse
-
-import torch
-from torch import nn, optim
-from torch.utils.data import DataLoader
-
-from torchvision import datasets, transforms, utils
-
+from torch import nn
 from tqdm import tqdm
 
-from vqvae import VQVAE
-from scheduler import CycleScheduler
 
-
-def train(epoch_num, loader, model, optimizer, scheduler, device, dataset_path, n_run):
+def train(epoch_num, loader, model, writer, do_sample, sampler, optimizer, scheduler, device, dataset_name, run_num):
     loader = tqdm(loader)
 
     criterion = nn.MSELoss()
 
     latent_loss_weight = 0.25
-    sample_size = 25
 
     mse_sum = 0
     mse_n = 0
@@ -51,21 +40,7 @@ def train(epoch_num, loader, model, optimizer, scheduler, device, dataset_path, 
             )
         )
 
-        if i % 100 == 0:
-            model.eval()
+    writer.add_scalar('Loss/train', mse_sum / mse_n, epoch_num)
 
-            sample = img[:sample_size]
-
-            with torch.no_grad():
-                out, _ = model(sample)
-
-            utils.save_image(
-                torch.cat([sample, out], 0),
-                f'../checkpoint/{dataset_path}/{n_run}/vqvae/sample/{str(epoch_num + 1).zfill(5)}_{str(i).zfill(5)}.png',
-                nrow=sample_size,
-                normalize=True,
-                range=(-1, 1),
-            )
-
-            model.train()
-
+    if do_sample:
+        sampler(model, img, dataset_name, run_num, epoch_num, img.shape[0])

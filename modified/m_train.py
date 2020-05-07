@@ -24,6 +24,18 @@ elif folder_name == 'bottom':
 elif folder_name == 'vqvae':
     loader = get_image_loader(dataset_name, batch_size, transform= get_transform(size), shuffle=True, num_workers=4)
 
-train(folder_name, loader, dataset_name, n_run, start_epoch=start_epoch, end_epoch=end_epoch, batch_size=batch_size, sched=sched, device=device,
-          size=size, lr=lr,
-          amp=amp)
+train(
+       folder_name,
+       loader,
+       dataset_name,
+       n_run,
+       start_epoch=start_epoch,
+       end_epoch=end_epoch,
+       batch_size=batch_size,
+       sched=sched,
+       device=device,
+       size=size,
+       lr=lr,
+       amp=amp,
+
+       )

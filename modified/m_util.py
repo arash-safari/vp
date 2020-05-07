@@ -57,23 +57,27 @@ def get_model_type(folder_name):
         return 'vqvae'
 
 
-def get_path(dataset, n_run, model_name, file_type, checkpoint=0):
-    file_path = '../checkpoint/{}/{}/'.format(*[dataset, n_run])
+def get_path(dataset_name, run_num, folder_name, file_type, checkpoint=0):
     checkpoint = '{}'.format(str(checkpoint).zfill(3))
-    model_type = get_model_type(model_name)
-    if model_type == 'vqvae':
-        file_path += model_type + '/'
-    elif model_type == 'pixelsnail':
-        file_path += model_type + '/{}/'.format(model_name)
+    model_type = get_model_type(folder_name)
+
+    file_path = '../checkpoint/{}/{}/{}/'.format(*[dataset_name, run_num, model_type])
+    if model_type == 'pixelsnail':
+        file_path += '{}/'.format(folder_name)
 
     if file_type == 'conf':
         file_path += 'conf.ini'
     else:
-        if model_type == 'vqvae':
-            ctph = '{}_{}.pt'.format(*[model_type, checkpoint])
-        elif model_type == 'pixelsnail':
-            ctph = '{}_{}_{}.pt'.format(*[model_type, model_name, checkpoint])
-        file_path += ctph
+        file_path += '{}.pt'.format(*[checkpoint])
+    return file_path
+
+
+def get_runtime_sampler_path(folder_name, dataset_name, run_num, epoch):
+    model_type = get_model_type(folder_name)
+    file_path = '../checkpoint/{}/{}/{}/'.format(*[dataset_name, run_num, model_type])
+    if model_type == 'pixelsnail':
+        file_path += '{}/'.format(folder_name)
+    file_path += 'runtime_samples/{}'.format(*[str(epoch + 1).zfill(5)])
     return file_path
 
 

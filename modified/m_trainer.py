@@ -8,6 +8,7 @@ from m_util import conf_parser, model_object_parser, get_model_type, get_path, l
 from consts import PIXELSNAIL, VQVAE, TOP, BOTTOM, MIDDLE
 from m_train_pixelsnail import train as train_pixelsnail
 from m_train_vqvae import train as train_vqvae
+from torch.utils.tensorboard import SummaryWriter
 
 from torch import optim, nn
 import torch
@@ -27,9 +28,9 @@ def get_scheduler(lr, epoch, sched, optimizer, loader):
     return scheduler
 
 
-def train(folder_name, loader, dataset_name, n_run, start_epoch=-1, end_epoch=-1, batch_size=-1, sched=None, device='cuda',
-          size=256, lr=-1,
-          amp=None):
+def train(folder_name, loader, dataset_name, n_run, sample_period, sampler, start_epoch=-1,
+          end_epoch=-1, batch_size=-1, sched=None, device='cuda', size=256, lr=-1, amp=None):
+
     model_type = get_model_type(folder_name)
     _, train_params = conf_parser(dataset_name, n_run, folder_name)
     model = model_object_parser(dataset_name, n_run, folder_name)
@@ -73,14 +74,19 @@ def train(folder_name, loader, dataset_name, n_run, start_epoch=-1, end_epoch=-1
 
     model = nn.DataParallel(model)
     model = model.to(device)
-
+    sample_iter = 0
+    folder_path = get_path(dataset_name, n_run, model, folder_name, checkpoint=0)[:-1]
+    writer = SummaryWriter(log_dir=folder_path+'{}_{}'.format(*[start_epoch, end_epoch]))
     if model_type == PIXELSNAIL:
 
         for i in range(start_epoch, end_epoch):
+            sample_iter += 1
+            do_sample = sample_period > 0 and sample_iter % sample_period == 0
             scheduler = get_scheduler(lr, end_epoch - start_epoch, sched, optimizer, loader)
 
-            train_pixelsnail(i, loader, model, optimizer, scheduler, device)
+            train_pixelsnail(i, loader, model,writer , do_sample, sampler, optimizer, scheduler, device)
             save_path = get_path(dataset_name, n_run, model, folder_name, checkpoint=i)
+
             torch.save(
                 {'model': model.module.state_dict(), 'args': args},
                 save_path,
@@ -89,6 +95,9 @@ def train(folder_name, loader, dataset_name, n_run, start_epoch=-1, end_epoch=-1
     elif model_type == VQVAE:
         scheduler = get_scheduler(args, sched, optimizer, loader)
         for i in range(start_epoch, end_epoch):
-            train_vqvae(i, loader, model, optimizer, scheduler, device, dataset_name, n_run)
+            sample_iter += 1
+            do_sample = sample_period > 0 and sample_iter % sample_period ==0
+
+            train_vqvae(i, loader, model,writer , do_sample, sampler, optimizer, scheduler, device, dataset_name, n_run)
             save_path = get_path(dataset_name, n_run, model, folder_name, checkpoint=i)
             torch.save(model.state_dict(), save_path)
