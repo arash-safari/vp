@@ -8,26 +8,19 @@ except ImportError:
     amp = None
 
 
-def train(args, epoch, loader, model, optimizer, scheduler, device):
+def train(epoch, loader, model, optimizer, scheduler, device):
     loader = tqdm(loader)
 
     criterion = nn.CrossEntropyLoss()
 
-    for i, (top, bottom, label) in enumerate(loader):
+    for i, (x, cond, label) in enumerate(loader):
         model.zero_grad()
 
-        top = top.to(device)
+        x = x.to(device)
 
-        if args.hier == 'top':
-            target = top
-            out, _ = model(top)
+        out, _ = model(x, condition=cond)
 
-        elif args.hier == 'bottom':
-            bottom = bottom.to(device)
-            target = bottom
-            out, _ = model(bottom, condition=top)
-
-        loss = criterion(out, target)
+        loss = criterion(out, x)
         loss.backward()
 
         if scheduler is not None:
@@ -35,8 +28,8 @@ def train(args, epoch, loader, model, optimizer, scheduler, device):
         optimizer.step()
 
         _, pred = out.max(1)
-        correct = (pred == target).float()
-        accuracy = correct.sum() / target.numel()
+        correct = (pred == x).float()
+        accuracy = correct.sum() / x.numel()
 
         lr = optimizer.param_groups[0]['lr']
 

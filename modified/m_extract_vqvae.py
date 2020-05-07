@@ -1,14 +1,11 @@
-import argparse
 import pickle
-
 import torch
 from torch.utils.data import DataLoader
 from torchvision import transforms
 import lmdb
 from tqdm import tqdm
-from m_util import get_path
+from m_util import get_path, model_object_parser
 from dataset import ImageFileDataset, CodeRow
-from vqvae import VQVAE
 
 
 def extract(lmdb_env, loader, model, device):
@@ -46,7 +43,7 @@ def main(dataset_path, n_run, vqvae_ckpt, size, device='cuda'):
     loader = DataLoader(dataset, batch_size=128, shuffle=False, num_workers=4)
 
     ckpt_path = get_path(dataset, n_run, 'vqvae', 'ckpt', checkpoint=vqvae_ckpt)
-    model = VQVAE()
+    model = model_object_parser(dataset_path, n_run, 'vqvae')
     model.load_state_dict(torch.load(ckpt_path))
     model = model.to(device)
     model.eval()
