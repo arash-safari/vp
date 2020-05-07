@@ -5,7 +5,7 @@ Created on Sat May  2 13:30:48 2020
 @author: Arash
 """
 from m_util import conf_parser, model_object_parser, get_model_type, get_path, load_part
-from consts import PIXELSNAIL, VQVAE, TOP, BOTTOM, MIDDLE
+from consts import PIXELSNAIL, VQVAE, TOP, BOTTOM, MIDDLE, VQVAE_1
 from m_train_pixelsnail import train as train_pixelsnail
 from m_train_vqvae import train as train_vqvae
 from torch.utils.tensorboard import SummaryWriter
@@ -92,7 +92,7 @@ def train(folder_name, loader, dataset_name, n_run, sample_period, sampler, star
                 save_path,
             )
 
-    elif model_type == VQVAE:
+    elif model_type in [VQVAE, VQVAE_1]:
         scheduler = get_scheduler(args, sched, optimizer, loader)
         for i in range(start_epoch, end_epoch):
             sample_iter += 1

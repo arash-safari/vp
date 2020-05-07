@@ -2,6 +2,7 @@ import sys
 
 sys.path.append('../')
 import torch
+from m_vqvae import VQVAE_1
 from vqvae import VQVAE
 from pixelsnail import PixelSNAIL
 from m_conf_parser import model_option_parser, training_params_parser
@@ -38,6 +39,16 @@ def create_model_object(model_type, options):
             n_out_res_block=options['n_out_res_block'],
             attention=options['attention']
         )
+    elif model_type == 'vqvae_1':
+        return VQVAE_1(
+            in_channel=options['in_channel'],
+            channel=options['channel'],
+            n_res_block=options['n_res_block'],
+            n_res_channel=options['n_res_channel'],
+            embed_dim=options['embed_dim'],
+            n_embed=options['n_embed'],
+            decay=options['decay']
+        )
     elif model_type == 'vqvae':
         return VQVAE(
             in_channel=options['in_channel'],
@@ -53,6 +64,8 @@ def create_model_object(model_type, options):
 def get_model_type(folder_name):
     if folder_name in ['top', 'bottom', 'middle']:
         return 'pixelsnail'
+    elif folder_name == 'vqvae_1':
+        return 'vqvae_1'
     elif folder_name == 'vqvae':
         return 'vqvae'
 

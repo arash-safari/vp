@@ -24,7 +24,7 @@ def model_option_parser(model_type, conf_path):
             'n_out_res_block': model.getint('n_out_res_block'),
             'attention': model.getboolean('attention')
         }
-    elif model_type == 'vqvae':
+    elif model_type in ['vqvae','vqvae_1']:
         return {
             'in_channel': model.getint('in_channel'),
             'channel': model.getint('channel'),
