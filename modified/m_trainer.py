@@ -8,12 +8,10 @@ from m_util import conf_parser, model_object_parser, get_model_type, get_path, l
 from consts import PIXELSNAIL, VQVAE, TOP, BOTTOM, MIDDLE
 from m_train_pixelsnail import train as train_pixelsnail
 from m_train_vqvae import train as train_vqvae
-from m_data_loader import get_lmdb_pixel_loader, get_image_loader
-from torch.utils.data import DataLoader
+
 from torch import optim, nn
 import torch
 from scheduler import CycleScheduler
-from m_preprocessing import get_transform
 
 
 def get_optimizer(model, lr):
@@ -29,7 +27,7 @@ def get_scheduler(lr, epoch, sched, optimizer, loader):
     return scheduler
 
 
-def train(dataset_name, n_run, folder_name, start_epoch=-1, end_epoch=-1, batch_size=-1, sched=None, device='cuda',
+def train(folder_name, loader, dataset_name, n_run, start_epoch=-1, end_epoch=-1, batch_size=-1, sched=None, device='cuda',
           size=256, lr=-1,
           amp=None):
     model_type = get_model_type(folder_name)
@@ -77,12 +75,6 @@ def train(dataset_name, n_run, folder_name, start_epoch=-1, end_epoch=-1, batch_
     model = model.to(device)
 
     if model_type == PIXELSNAIL:
-        if folder_name == 'top':
-            loader = get_lmdb_pixel_loader(dataset_name, n_run, batch_size,
-                                           x_name='top', cond=None, shuffle=True, num_workers=4)
-        elif folder_name == 'bottom':
-            loader = get_lmdb_pixel_loader(dataset_name, n_run, batch_size,
-                                           x_name='bottom', cond='top', shuffle=True, num_workers=4)
 
         for i in range(start_epoch, end_epoch):
             scheduler = get_scheduler(lr, end_epoch - start_epoch, sched, optimizer, loader)
@@ -95,7 +87,6 @@ def train(dataset_name, n_run, folder_name, start_epoch=-1, end_epoch=-1, batch_
             )
 
     elif model_type == VQVAE:
-        loader = get_image_loader(dataset_name, batch_size, transform = get_transform(size), shuffle=True, num_workers=4)
         scheduler = get_scheduler(args, sched, optimizer, loader)
         for i in range(start_epoch, end_epoch):
             train_vqvae(i, loader, model, optimizer, scheduler, device, dataset_name, n_run)
