@@ -26,3 +26,4 @@ def get_image_loader(dataset_path, batch_size, transform, shuffle=True, num_work
     dataset = datasets.ImageFolder(dataset_path, transform=transform)
     loader = DataLoader(dataset, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers)
     return loader
+
