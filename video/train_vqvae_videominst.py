@@ -40,7 +40,6 @@ for epoch in range(epoch_num):
         model.zero_grad()
         img = img[:,0:1,:,:]
         img = img.to(device)
-
         out, latent_loss = model(img)
         recon_loss = criterion(out, img)
         latent_loss = latent_loss.mean()
