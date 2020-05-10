@@ -23,7 +23,7 @@ model = VQVAE_1(in_channel=1,
             embed_dim=16,
             n_embed=4,
             decay=0.99,)
-dataset = VideoMnistDataset('datasets/mnist/moving_mnist/mnist_test_seq.npy', 1, 0,10000)
+dataset = VideoMnistDataset('datasets/mnist/moving_mnist/mnist_test_seq.npy', 1, 0,20000)
 loader  = video_mnist_dataloader(dataset, batch_size, shuffle=True, num_workers=4, drop_last=True)
 optimizer = get_optimizer(model, lr)
 model = model.to(device)
@@ -62,20 +62,19 @@ for epoch in range(epoch_num):
                     f'lr: {lr:.5f}'
                 )
             )
+        if iter is 0 and epoch > 0:
+            writer.add_scalar('Loss/train', mse_sum / mse_n, epoch_num)
 
-    writer.add_scalar('Loss/train', mse_sum / mse_n, epoch_num)
-    sample_imgs = torch.utils.data.Subset(dataset, list(range(0,10)))
+            # get some sample to see result
+            with torch.no_grad():
+                out, _ = model(img)
 
-    # get some sample to see result
-    with torch.no_grad():
-        out, _ = model(sample_imgs)
-
-    utils.save_image(
-        torch.cat([sample_imgs, out], 0),
-        'samples/videomnsit/vqvae/{}/{}.png'.format(*[run_num,epoch_num]),
-        nrow=batch_size,
-        normalize=True,
-        range=(-1, 1),
-    )
+            utils.save_image(
+                torch.cat([img, out], 0),
+                'samples/videomnsit/vqvae/{}/{}.png'.format(*[run_num,epoch_num]),
+                nrow=batch_size,
+                normalize=True,
+                range=(-1, 1),
+            )
 
     torch.save(model.state_dict(), 'checkpoints/videomnist/vqvae/{}/{}.pt'.format(*[run_num, str(epoch).zfill(5)]))
