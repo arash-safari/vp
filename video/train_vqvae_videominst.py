@@ -38,7 +38,7 @@ for epoch in range(epoch_num):
     mse_n = 0
     loader = tqdm(loader)
 
-    for img in loader:
+    for iter, img in enumerate(loader):
         model.zero_grad()
         img = img[:,0:1,:,:]
         img = img.to(device)
@@ -57,7 +57,7 @@ for epoch in range(epoch_num):
 
         loader.set_description(
             (
-                f'iter: {iter + 1}; mse: {recon_loss.item():.5f}; '
+                'iter: {iter + 1}; mse: {recon_loss.item():.5f}; '
                 f'latent: {latent_loss.item():.3f}; avg mse: {mse_sum / mse_n:.5f}; '
                 f'lr: {lr:.5f}'
             )
