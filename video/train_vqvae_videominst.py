@@ -1,14 +1,14 @@
-import sys
-sys.path.append('../image/modified')
-from m_vqvae import VQVAE_1
+from image.modified.m_vqvae import VQVAE_1
 from torch import optim, nn
 import torch
 from torchvision import utils
+from video.dataset import VideoMnistDataset
+from video.dataloader import video_mnist_dataloader
+from torch.utils.tensorboard import SummaryWriter
 
-from dataloader import video_mnist_dataloader
+
 def get_optimizer(model, lr):
     return optim.Adam(model.parameters(), lr=lr)
-from torch.utils.tensorboard import SummaryWriter
 
 lr = 0.001
 device = 'cuda'
