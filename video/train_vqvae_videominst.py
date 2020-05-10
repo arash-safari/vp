@@ -9,6 +9,7 @@ from dataloader import video_mnist_dataloader
 def get_optimizer(model, lr):
     return optim.Adam(model.parameters(), lr=lr)
 from torch.utils.tensorboard import SummaryWriter
+from tqdm import tqdm
 
 lr = 0.001
 device = 'cuda'
@@ -35,6 +36,7 @@ for epoch in range(epoch_num):
     latent_loss_weight = 0.25
     mse_sum = 0
     mse_n = 0
+    loader = tqdm(loader)
 
     for img in loader:
         model.zero_grad()
