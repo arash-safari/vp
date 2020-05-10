@@ -36,7 +36,7 @@ for epoch in range(epoch_num):
     mse_sum = 0
     mse_n = 0
 
-    for iter , (img, label) in enumerate(loader):
+    for img in loader:
         model.zero_grad()
         img = img[:,0,:,:]
         img = img.to(device)
