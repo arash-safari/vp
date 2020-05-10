@@ -38,7 +38,7 @@ for epoch in range(epoch_num):
 
     for img in loader:
         model.zero_grad()
-        img = img[:,0,:,:]
+        img = img[:,0:1,:,:]
         img = img.to(device)
 
         out, latent_loss = model(img)
