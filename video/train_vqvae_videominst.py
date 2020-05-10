@@ -54,14 +54,14 @@ for epoch in range(epoch_num):
         mse_n += img.shape[0]
 
         lr = optimizer.param_groups[0]['lr']
-
-        loader.set_description(
-            (
-                'iter: {iter + 1}; mse: {recon_loss.item():.5f}; '
-                f'latent: {latent_loss.item():.3f}; avg mse: {mse_sum / mse_n:.5f}; '
-                f'lr: {lr:.5f}'
+        if iter % 200 is 0:
+            loader.set_description(
+                (
+                    'iter: {iter + 1}; mse: {recon_loss.item():.5f}; '
+                    f'latent: {latent_loss.item():.3f}; avg mse: {mse_sum / mse_n:.5f}; '
+                    f'lr: {lr:.5f}'
+                )
             )
-        )
 
     writer.add_scalar('Loss/train', mse_sum / mse_n, epoch_num)
     sample_imgs = torch.utils.data.Subset(dataset, list(range(0,10)))
