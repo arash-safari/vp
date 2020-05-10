@@ -14,7 +14,7 @@ from tqdm import tqdm
 lr = 0.001
 device = 'cuda'
 epoch_num = 100
-batch_size = 10
+batch_size = 100
 run_num = 1
 model = VQVAE_1(in_channel=1,
             channel=32,
