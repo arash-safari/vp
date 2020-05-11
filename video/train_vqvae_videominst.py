@@ -21,8 +21,8 @@ model = VQVAE_1(in_channel=1,
             channel=32,
             n_res_block=2,
             n_res_channel=16,
-            embed_dim=4,
-            n_embed=2,
+            embed_dim=8,
+            n_embed=4,
             decay=0.99,)
 dataset = VideoMnistDataset('datasets/mnist/moving_mnist/mnist_test_seq.npy', 1, 0,20000)
 loader  = video_mnist_dataloader(dataset, batch_size, shuffle=True, num_workers=4, drop_last=True)
