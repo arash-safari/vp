@@ -11,7 +11,7 @@ def get_optimizer(model, lr):
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 
-lr = 0.00001
+lr = 0.0001
 device = 'cuda'
 epoch_num = 100
 batch_size = 100
