@@ -11,8 +11,8 @@ class VideoMnistDataset(Dataset):
         frames_shape = self.frames.shape
         videos_num = frames_shape[0]
         video_len = frames_shape[1]
-        self.frames = self.frames - np.ones(frames_shape) / 2
-        self.frames = 2 * self.frames
+        # self.frames = self.frames - np.ones(frames_shape) / 2
+        # self.frames = 2 * self.frames
         self.frames.astype(np.float32)
         self.sample_per_video = video_len - frame_len + 1
         self.length = videos_num * self.sample_per_video
