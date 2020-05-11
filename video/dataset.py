@@ -8,6 +8,7 @@ class VideoMnistDataset(Dataset):
         self.frame_len = int(frame_len)
         self.frames = np.load(path)
         self.frames = self.frames.swapaxes(0, 1)[:, :, start_sample:end_sample, :].astype(np.float32)
+        self.frames = (self.frames > 1).float()
         frames_shape = self.frames.shape
         videos_num = frames_shape[0]
         video_len = frames_shape[1]
