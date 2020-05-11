@@ -75,7 +75,7 @@ for epoch in range(epoch_num):
             out = (out > 0.5).float()
             utils.save_image(
                 torch.cat([sample, out], 0),
-                'samples/videomnsit/vqvae/{}/{}.png'.format(*[run_num,epoch_num]),
+                'samples/videomnist/vqvae/{}/{}.png'.format(*[run_num,epoch_num]),
                 nrow=image_samples,
                 normalize=True,
                 range=(-1, 1),
