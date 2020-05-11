@@ -65,9 +65,7 @@ for epoch in range(epoch_num):
         if iter is 0 and epoch > 0:
             writer.add_scalar('Loss/train', mse_sum / mse_n, epoch_num)
 
-            # get some sample to see result
-            with torch.no_grad():
-                out, _ = model(img)
+            # save samples to see result
 
             utils.save_image(
                 torch.cat([img, out], 0),
