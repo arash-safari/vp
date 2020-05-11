@@ -18,10 +18,10 @@ batch_size = 100
 run_num = 1
 image_samples = 10
 model = VQVAE_1(in_channel=1,
-            channel=32,
+            channel=16,
             n_res_block=2,
-            n_res_channel=16,
-            embed_dim=4,
+            n_res_channel=8,
+            embed_dim=2,
             n_embed=4,
             decay=0.99,)
 dataset = VideoMnistDataset('datasets/mnist/moving_mnist/mnist_test_seq.npy', 1, 0,20000)
