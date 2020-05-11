@@ -16,6 +16,7 @@ device = 'cuda'
 epoch_num = 100
 batch_size = 100
 run_num = 1
+image_samples = 10
 model = VQVAE_1(in_channel=1,
             channel=32,
             n_res_block=2,
@@ -64,15 +65,21 @@ for epoch in range(epoch_num):
             )
         if iter is 0 and epoch > 0:
             writer.add_scalar('Loss/train', mse_sum / mse_n, epoch_num)
+            model.eval()
+            sample = img[:image_samples]
 
+            with torch.no_grad():
+                out, _ = model(sample)
             # save samples to see result
 
+            out = (out > 0.5).float()
             utils.save_image(
-                torch.cat([img, out], 0),
+                torch.cat([sample, out], 0),
                 'samples/videomnsit/vqvae/{}/{}.png'.format(*[run_num,epoch_num]),
-                nrow=batch_size,
+                nrow=image_samples,
                 normalize=True,
                 range=(-1, 1),
             )
+            model.train()
 
     torch.save(model.state_dict(), 'checkpoints/videomnist/vqvae/{}/{}.pt'.format(*[run_num, str(epoch).zfill(5)]))
