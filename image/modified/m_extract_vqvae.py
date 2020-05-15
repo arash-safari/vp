@@ -5,8 +5,8 @@ from torchvision import transforms
 import lmdb
 from tqdm import tqdm
 from m_util import get_path, model_object_parser
-from m_dataset import CodeRow1, ImageFileDataset
-from image.dataset import CodeRow
+from m_dataset import CodeRow1
+from image.dataset import CodeRow, ImageFileDataset
 
 def extract2(lmdb_env, loader, model, device):
     index = 0
