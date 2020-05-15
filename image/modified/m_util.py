@@ -3,8 +3,8 @@ import sys
 sys.path.append('../')
 import torch
 from m_vqvae import VQVAE_1
-from vqvae import VQVAE
-from pixelsnail import PixelSNAIL
+from image.vqvae import VQVAE
+from image.pixelsnail import PixelSNAIL
 from m_conf_parser import model_option_parser, training_params_parser
 
 
