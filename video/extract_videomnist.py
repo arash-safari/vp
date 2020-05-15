@@ -8,7 +8,7 @@ from video.dataset import CodeRowVideoMnist
 import pickle
 
 
-def extract_videomnist(lmdb_env, loader, model, device):
+def extract_code(lmdb_env, loader, model, device):
     index = 0
 
     with lmdb_env.begin(write=True) as txn:
@@ -29,10 +29,10 @@ def extract_videomnist(lmdb_env, loader, model, device):
         txn.put('length'.encode('utf-8'), str(index).encode('utf-8'))
 
 
-def main(model, ckpt_path, lamda_name, device, loader):
+def extract(model, ckpt_path, lamda_name, device, loader):
     map_size = 100 * 1024 * 1024 * 1024
     model.load_state_dict(torch.load(ckpt_path), strict=False)
     model = model.to(device)
     model.eval()
     env = lmdb.open(lamda_name, map_size=map_size)
-    extract_videomnist(env, loader, model, device)
+    extract_code(env, loader, model, device)
