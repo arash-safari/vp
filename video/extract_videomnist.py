@@ -21,7 +21,7 @@ def extract_code(lmdb_env, loader, model, device):
             _id = _id.detach().cpu().numpy()
 
             for frame_ind, video_ind, _id in zip(frame_ind, video_ind, _id):
-                row = CodeRowVideoMnist(_id=_id, frame_ind=frame_ind, video_ind=video_ind)
+                row = CodeRowVideoMnist(id=_id, frame_ind=frame_ind, video_ind=video_ind)
                 txn.put(str(index).encode('utf-8'), pickle.dumps(row))
                 index += 1
                 pbar.set_description(f'inserted: {index}')
