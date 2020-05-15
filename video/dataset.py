@@ -58,4 +58,4 @@ class VideoMnistLMDBDataset(Dataset):
 
             row = pickle.loads(txn.get(key))
 
-        return torch.from_numpy(row.id), torch.from_numpy(row.video_ind), row.frame_ind
+        return torch.from_numpy(row.id), row.video_ind, row.frame_ind
