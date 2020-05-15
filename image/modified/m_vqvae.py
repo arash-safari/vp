@@ -54,7 +54,6 @@ class VQVAE_1(nn.Module):
 
     def decode_code(self, code):
         quant = self.quantize.embed_code(code)
-        print(quant.shape)
         quant = quant.permute(0, 3, 1, 2)
         dec = self.decode(quant)
         return dec
