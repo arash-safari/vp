@@ -1,5 +1,4 @@
 import sys
-
 sys.path.append('../')
 import torch
 from m_vqvae import VQVAE_1
