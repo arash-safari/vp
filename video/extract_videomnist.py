@@ -17,7 +17,7 @@ def extract_code(lmdb_env, loader, model, device):
         for frame, video_ind, frame_ind in pbar:
             frame = frame.to(device)
 
-            _, _, _id = model.encode(frame)
+            _, _, _id = model.module.encode(frame)
             _id = _id.detach().cpu().numpy()
 
             for frame_ind, video_ind, _id in zip(frame_ind, video_ind, _id):
@@ -31,8 +31,5 @@ def extract_code(lmdb_env, loader, model, device):
 
 def extract(model, ckpt_path, lamda_name, device, loader):
     map_size = 100 * 1024 * 1024 * 1024
-    model.load_state_dict(torch.load(ckpt_path), strict=False)
-    model = model.to(device)
-    model.eval()
     env = lmdb.open(lamda_name, map_size=map_size)
     extract_code(env, loader, model, device)
