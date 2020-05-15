@@ -1,6 +1,9 @@
 import os
 from torch.utils.data import Dataset
 import numpy as np
+from collections import namedtuple
+
+CodeRowVideoMnist = namedtuple('CodeRowVideoMnist', ['id', 'video_ind', 'frame_ind'])
 
 
 class VideoMnistDataset(Dataset):
@@ -24,4 +27,4 @@ class VideoMnistDataset(Dataset):
         video_ind = int(index / self.sample_per_video)
         frame_ind = index - video_ind * self.sample_per_video
 
-        return self.frames[video_ind, frame_ind: frame_ind + self.frame_len, :, :]
+        return self.frames[video_ind, frame_ind: frame_ind + self.frame_len, :, :], video_ind, frame_ind

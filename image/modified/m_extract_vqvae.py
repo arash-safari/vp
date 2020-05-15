@@ -5,8 +5,9 @@ from torchvision import transforms
 import lmdb
 from tqdm import tqdm
 from m_util import get_path, model_object_parser
-from m_dataset import CodeRow1
+from m_dataset import CodeRow1, CodeRowVideoMnist
 from image.dataset import CodeRow, ImageFileDataset
+
 
 def extract2(lmdb_env, loader, model, device):
     index = 0
@@ -44,6 +45,27 @@ def extract1(lmdb_env, loader, model, device):
 
             for file, _id in zip(filename, _id):
                 row = CodeRow1(_id=_id, filename=file)
+                txn.put(str(index).encode('utf-8'), pickle.dumps(row))
+                index += 1
+                pbar.set_description(f'inserted: {index}')
+
+        txn.put('length'.encode('utf-8'), str(index).encode('utf-8'))
+
+
+def extract_videomnist(lmdb_env, loader, model, device):
+    index = 0
+
+    with lmdb_env.begin(write=True) as txn:
+        pbar = tqdm(loader)
+
+        for frame, video_ind, frame_ind in pbar:
+            frame = frame.to(device)
+
+            _, _, _id = model.encode(frame)
+            _id = _id.detach().cpu().numpy()
+
+            for file, _id in zip( _id, frame_ind, video_ind):
+                row = CodeRowVideoMnist(_id=_id, frame_ind=frame_ind, video_ind=video_ind)
                 txn.put(str(index).encode('utf-8'), pickle.dumps(row))
                 index += 1
                 pbar.set_description(f'inserted: {index}')
