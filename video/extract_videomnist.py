@@ -20,7 +20,7 @@ def extract_code(lmdb_env, loader, model, device):
             _, _, _id = model.encode(frame)
             _id = _id.detach().cpu().numpy()
 
-            for file, _id in zip(_id, frame_ind, video_ind):
+            for frame_ind, video_ind, _id in zip(frame_ind, video_ind, _id):
                 row = CodeRowVideoMnist(_id=_id, frame_ind=frame_ind, video_ind=video_ind)
                 txn.put(str(index).encode('utf-8'), pickle.dumps(row))
                 index += 1
