@@ -8,7 +8,6 @@ from collections import namedtuple
 import torch
 from torch.utils.data import Dataset
 import lmdb
-from dataset import CodeRow, ImageFileDataset, LMDBDataset
 CodeRow1 = namedtuple('CodeRow1', ['id', 'filename'])
 
 
