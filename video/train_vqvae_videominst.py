@@ -4,7 +4,7 @@ from m_vqvae import VQVAE_1
 from torch import optim, nn
 import torch
 from torchvision import utils
-from dataset import FrameMnistDataset
+from dataset import MnistVideoDataset
 from dataloader import video_mnist_dataloader
 def get_optimizer(model, lr):
     return optim.Adam(model.parameters(), lr=lr)
@@ -24,7 +24,7 @@ model = VQVAE_1(in_channel=1,
             embed_dim=8,
             n_embed=4,
             decay=0.99,)
-dataset = VideoMnistDataset('datasets/mnist/moving_mnist/mnist_test_seq.npy', 1, 0,20000)
+dataset = MnistVideoDataset('datasets/mnist/moving_mnist/mnist_test_seq.npy', 1, 0,20000)
 loader  = video_mnist_dataloader(dataset, batch_size, shuffle=True, num_workers=4, drop_last=True)
 optimizer = get_optimizer(model, lr)
 model = model.to(device)
