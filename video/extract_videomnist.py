@@ -29,7 +29,7 @@ def extract_code(lmdb_env, loader, model, device):
         txn.put('length'.encode('utf-8'), str(index).encode('utf-8'))
 
 
-def extract(model, ckpt_path, lamda_name, device,loader):
+def extract(model, lamda_name, device,loader):
     map_size = 100 * 1024 * 1024 * 1024
     env = lmdb.open(lamda_name, map_size=map_size)
     extract_code(env, loader, model, device)
