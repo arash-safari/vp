@@ -20,6 +20,7 @@ parts/
 sdist/
 var/
 video/datasets
+video/samples
 video/checkpoints
 video/logs
 wheels/
