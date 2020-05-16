@@ -20,7 +20,8 @@ def extract_code(lmdb_env, loader, model, device):
             for i,frames in enumerate(frames_batch):
 
                 frames = frames.to(device)
-
+                frames.unsqueeze(1)
+                print(frames.shape)
                 _, _, _ids = model.module.encode(frames)
                 _ids = _ids.detach().cpu().numpy()
                 row = CodeRowVideoMnist(ids=_ids,  video_ind=video_ind_batch[i])
