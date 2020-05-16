@@ -4,7 +4,7 @@ from m_vqvae import VQVAE_1
 from torch import optim, nn
 import torch
 from torchvision import utils
-from dataset import VideoMnistDataset
+from dataset import FrameMnistDataset
 from dataloader import video_mnist_dataloader
 def get_optimizer(model, lr):
     return optim.Adam(model.parameters(), lr=lr)

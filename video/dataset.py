@@ -8,7 +8,7 @@ import torch
 CodeRowVideoMnist = namedtuple('CodeRowVideoMnist', ['id', 'video_ind', 'frame_ind'])
 
 
-class VideoMnistDataset(Dataset):
+class FrameMnistDataset(Dataset):
     def __init__(self, path, frame_len, start_sample, end_sample):
         self.frame_len = int(frame_len)
         self.frames = np.load(path)
@@ -32,7 +32,7 @@ class VideoMnistDataset(Dataset):
         return self.frames[video_ind, frame_ind: frame_ind + self.frame_len, :, :], video_ind, frame_ind
 
 
-class VideoMnistLMDBDataset(Dataset):
+class FrameMnistLMDBDataset(Dataset):
     def __init__(self, path):
         self.env = lmdb.open(
             path,
@@ -47,6 +47,45 @@ class VideoMnistLMDBDataset(Dataset):
             raise IOError('Cannot open lmdb dataset', path)
 
         with self.env.begin(write=False) as txn:
+            self.length = int(txn.get('length'.encode('utf-8')).decode('utf-8'))
+
+    def __len__(self):
+        return self.length
+
+    def __getitem__(self, index):
+        with self.env.begin(write=False) as txn:
+            key = str(index).encode('utf-8')
+
+            row = pickle.loads(txn.get(key))
+
+        return torch.from_numpy(row.id), row.video_ind, row.frame_ind
+
+
+class VideoMnistLMDBDataset(Dataset):
+
+    def __init__(self, path, frame_len):
+        self.env = lmdb.open(
+            path,
+            max_readers=32,
+            readonly=True,
+            lock=False,
+            readahead=False,
+            meminit=False,
+        )
+
+        if not self.env:
+            raise IOError('Cannot open lmdb dataset', path)
+
+        with self.env.begin(write=False) as txn:
+            self.frame_len = int(frame_len)
+            [start_sample: end_sample,:,:,:]
+            videos_num = frames_shape[0]
+            video_len = frames_shape[1]
+            # self.frames = self.frames - np.ones(frames_shape) / 2
+            # self.frames = 2 * self.frames
+            self.sample_per_video = video_len - frame_len + 1
+            self.length = videos_num * self.sample_per_video
+
             self.length = int(txn.get('length'.encode('utf-8')).decode('utf-8'))
 
     def __len__(self):
