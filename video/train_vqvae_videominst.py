@@ -19,7 +19,7 @@ from tqdm import tqdm
 
 def train(model, epoch_num, batch_size, lr, device, run_num, image_samples):
 
-    dataset = MnistVideoDataset('/home/stipendiater/mohamadi/vp/video/datasets/mnist/moving_mnist', 1)
+    dataset = MnistVideoDataset('/home/stipendiater/mohamadi/vp/video/datasets/mnist/moving_mnist/mnist_test_seq.npy', 1)
     loader = video_mnist_dataloader(dataset, batch_size, shuffle=True, num_workers=4, drop_last=True)
     optimizer = get_optimizer(model, lr)
     model = model.to(device)
