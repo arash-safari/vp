@@ -18,8 +18,8 @@ from tqdm import tqdm
 
 
 def train(model, epoch_num, batch_size, lr, device, run_num, image_samples):
-
-    dataset = MnistVideoDataset('/home/stipendiater/mohamadi/vp/video/datasets/mnist/moving_mnist/mnist_test_seq.npy', 1)
+    dir = '/home/stipendiater/mohamadi/vp/video/'
+    dataset = MnistVideoDataset(dir + 'datasets/mnist/moving_mnist/mnist_test_seq.npy', 1)
     loader = video_mnist_dataloader(dataset, batch_size, shuffle=True, num_workers=4, drop_last=True)
     optimizer = get_optimizer(model, lr)
     model = model.to(device)
@@ -69,12 +69,12 @@ def train(model, epoch_num, batch_size, lr, device, run_num, image_samples):
                 out = (out > 0.5).float()
                 utils.save_image(
                     torch.cat([sample, out], 0),
-                    'samples/videomnist/vqvae/{}/{}.png'.format(*[run_num, epoch]),
+                    dir + 'samples/videomnist/vqvae/{}/{}.png'.format(*[run_num, epoch]),
                     nrow=image_samples,
                     normalize=True,
                     range=(-1, 1),
                 )
                 model.train()
 
-        torch.save(model.state_dict(), 'checkpoints/videomnist/vqvae/{}/{}.pt'.format(*[run_num, str(epoch).zfill(5)]))
+        torch.save(model.state_dict(), dir + 'checkpoints/videomnist/vqvae/{}/{}.pt'.format(*[run_num, str(epoch).zfill(5)]))
 
