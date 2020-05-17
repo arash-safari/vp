@@ -35,7 +35,7 @@ def train(model, epoch_num, batch_size, lr, device, run_num, image_samples):
 
         for iter, img in enumerate(loader):
             model.zero_grad()
-            img = img[:, 0:1, :, :]
+            img = img.squeeze(1)
             img = img.to(device)
             out, latent_loss = model(img)
             recon_loss = criterion(out, img)
@@ -78,18 +78,3 @@ def train(model, epoch_num, batch_size, lr, device, run_num, image_samples):
 
         torch.save(model.state_dict(), 'checkpoints/videomnist/vqvae/{}/{}.pt'.format(*[run_num, str(epoch).zfill(5)]))
 
-lr = 0.0001
-device = 'cuda'
-epoch_num = 100
-batch_size = 100
-run_num = 1
-image_samples = 10
-model = VQVAE_1(in_channel=1,
-                channel=32,
-                n_res_block=2,
-                n_res_channel=16,
-                embed_dim=8,
-                n_embed=4,
-                decay=0.99, )
-
-train(model, epoch_num, batch_size, lr, device, run_num, image_samples)
