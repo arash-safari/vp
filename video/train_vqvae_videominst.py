@@ -35,7 +35,8 @@ def train(model, epoch_num, batch_size, lr, device, run_num, image_samples):
 
         for iter, img in enumerate(loader):
             model.zero_grad()
-            img = img.squeeze(1)
+            img = img[0]
+            # img = img.squeeze(1)
             img = img.to(device)
             out, latent_loss = model(img)
             recon_loss = criterion(out, img)
