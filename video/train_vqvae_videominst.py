@@ -7,14 +7,12 @@ import torch
 from torchvision import utils
 from dataset import MnistVideoDataset
 from dataloader import video_mnist_dataloader
+from torch.utils.tensorboard import SummaryWriter
+from tqdm import tqdm
 
 
 def get_optimizer(model, lr):
     return optim.Adam(model.parameters(), lr=lr)
-
-
-from torch.utils.tensorboard import SummaryWriter
-from tqdm import tqdm
 
 
 def train(model, epoch_num, batch_size, lr, device, run_num, image_samples):
@@ -76,5 +74,5 @@ def train(model, epoch_num, batch_size, lr, device, run_num, image_samples):
                 )
                 model.train()
 
-        torch.save(model.state_dict(), dir + 'checkpoints/videomnist/vqvae/{}/{}.pt'.format(*[run_num, str(epoch).zfill(5)]))
-
+        torch.save(model.state_dict(),
+                   dir + 'checkpoints/videomnist/vqvae/{}/{}.pt'.format(*[run_num, str(epoch).zfill(5)]))
