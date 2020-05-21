@@ -49,7 +49,12 @@ class ConvLstmCell(nn.Module):
         cell_gate = f.tanh(cell_gate)
 
         # compute current cell and hidden state
+        print(remember_gate.size())
+        print(prev_cell.size())
+        print(in_gate.size())
+        print(cell_gate.size())
         cell = (remember_gate * prev_cell) + (in_gate * cell_gate)
+
         hidden = out_gate * f.tanh(cell)
         self.state = hidden, cell
         return self.state
