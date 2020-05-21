@@ -1,5 +1,4 @@
 from torch import nn, optim
-from video.LSTM import LSTM
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 import torch
@@ -17,9 +16,8 @@ def _to_one_hot(y, num_classes):
     return zeros.scatter(scatter_dim, y_tensor, 1)
 
 
-def train(lstm_layers,input_channel, hidden_channel, kernel_size, loader, callback, epoch_num, batch_size, device, lr, run_num, ):
+def train(model,input_channel, loader, callback, epoch_num, device, lr, run_num, ):
     image_samples = 10
-    model = LSTM(lstm_layers, input_channel, hidden_channel, kernel_size)
     writer_path = 'vqvae_videomnist_1_00099_lstm'
     optimizer = get_optimizer(model, lr)
     model = model.to(device)
