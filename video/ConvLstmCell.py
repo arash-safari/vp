@@ -6,9 +6,10 @@ import torch.nn.functional as f
 
 class ConvLstmCell(nn.Module):
 
-    def __init__(self, input_channel, hidden_channel, kernel_size):
+    def __init__(self, input_channel, hidden_channel, kernel_size, device):
         super().__init__()
         self.state = None
+        self.device = device
         self.input_channel = input_channel
         self.hidden_channel = hidden_channel
         self.Gates = nn.Conv2d(input_channel + hidden_channel, 4 * hidden_channel, kernel_size, kernel_size // 2)
@@ -26,6 +27,7 @@ class ConvLstmCell(nn.Module):
                 Variable(torch.zeros(state_size)),
                 Variable(torch.zeros(state_size))
             )
+            self.state = self.state.to(self.device)
 
 
         prev_hidden, prev_cell = self.state
