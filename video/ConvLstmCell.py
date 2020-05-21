@@ -21,7 +21,7 @@ class ConvLstmCell(nn.Module):
             self.state = state
 
         if self.state is None:
-            state_size = [batch_size, self.hidden_size] + list(spatial_size)
+            state_size = [batch_size, self.hidden_channel] + list(spatial_size)
             self.state = (
                 Variable(torch.zeros(state_size)),
                 Variable(torch.zeros(state_size))
