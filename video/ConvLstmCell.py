@@ -17,7 +17,8 @@ class ConvLstmCell(nn.Module):
     def forward(self, input, state=None):
         batch_size = input.data.size()[0]
         spatial_size = input.data.size()[2:]
-
+        print('batch_size')
+        print(batch_size)
         if self.state is None:
             self.state = state
 
