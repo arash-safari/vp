@@ -34,16 +34,8 @@ class ConvLstmCell(nn.Module):
         prev_hidden = prev_hidden.to(self.device)
 
         # data size is [batch, channel, height, width]
-        print('input size')
-        print(input.size())
-        print('prev_hidden')
-        print(prev_hidden.size())
         stacked_inputs = torch.cat((input.float(), prev_hidden), 1)
-        print('stacked_inputs')
-        print(stacked_inputs.size())
         gates = self.Gates(stacked_inputs)
-        print('gate_size')
-        print(gates.size())
         # chunk across channel dimension
         in_gate, remember_gate, out_gate, cell_gate = gates.chunk(4, 1)
 
@@ -56,14 +48,7 @@ class ConvLstmCell(nn.Module):
         cell_gate = f.tanh(cell_gate)
 
         # compute current cell and hidden state
-        print('remember_gate')
-        print(remember_gate.size())
-        print('prev_cell')
-        print(prev_cell.size())
-        print('in_gate')
-        print(in_gate.size())
-        print('cell_gate')
-        print(cell_gate.size())
+
         cell = (remember_gate * prev_cell) + (in_gate * cell_gate)
 
         hidden = out_gate * f.tanh(cell)
