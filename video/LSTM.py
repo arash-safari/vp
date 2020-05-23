@@ -4,7 +4,7 @@ from video.ConvLstmCell import ConvLstmCell
 
 class LSTM(nn.Module):
 
-    def __init__(self, layers_num, input_channel, hidden_channel, kernel_size ):
+    def __init__(self, layers_num, input_channel, hidden_channel, kernel_size,device ):
         super().__init__()
         self.type = type
         self.layers_num = layers_num
@@ -13,8 +13,9 @@ class LSTM(nn.Module):
         self.kernel_size = kernel_size
         self.cells = []
         self.cells_state = []
+        self.device = device
         for i in range(layers_num):
-            cell = ConvLstmCell(input_channel,hidden_channel,kernel_size)
+            cell = ConvLstmCell(input_channel,hidden_channel,kernel_size, device)
             self.cells.append(cell)
             self.cells_state.append(None)
 
