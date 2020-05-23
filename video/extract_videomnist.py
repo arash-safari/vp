@@ -11,7 +11,6 @@ from video.dataloader import video_mnist_dataloader
 
 
 def extract_code(lmdb_env, loader, model, device):
-    print('extract code ')
     index = 0
 
     with lmdb_env.begin(write=True) as txn:
