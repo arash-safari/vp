@@ -11,7 +11,7 @@ class LSTM(nn.Module):
         self.input_channel = input_channel
         self.hidden_channel = hidden_channel
         self.kernel_size = kernel_size
-        self.cells = []
+        self.cells = nn.ModuleList()
         self.cells_state = []
         self.device = device
         for i in range(layers_num):
