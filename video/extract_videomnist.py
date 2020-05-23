@@ -16,7 +16,7 @@ def extract_code(lmdb_env, loader, model, device):
 
     with lmdb_env.begin(write=True) as txn:
         pbar = tqdm(loader)
-
+        print('lmdb env')
         for frames_batch, video_ind_batch, frame_ind_batch in pbar:
             print('epoch {}'.format(index))
             for i,frames in enumerate(frames_batch):
