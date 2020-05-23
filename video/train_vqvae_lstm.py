@@ -13,10 +13,16 @@ def _to_one_hot(y, num_classes):
     y_tensor = y.view(*y.size(), -1)
     zeros = torch.zeros(*y.size(), num_classes, dtype=y.dtype)
 
-    return zeros.scatter(scatter_dim, y_tensor, 1)
+    return zeros.scatter(scatter_dim, y_tensor, 1).permute(0, 3, 2, 1)
 
 
-def train(model,input_channel, loader, callback, epoch_num, device, lr, run_num, ):
+def one_hot_to_int(y):
+    y_trans = y.permute(0, 2, 3, 1)
+    y_trans = y_trans.argmax(dim=-1)
+    return y_trans
+
+
+def train(model, input_channel, loader, callback, epoch_num, device, lr, run_num, ):
     image_samples = 10
     writer_path = 'vqvae_videomnist_1_00099_lstm'
     optimizer = get_optimizer(model, lr)
@@ -32,10 +38,12 @@ def train(model,input_channel, loader, callback, epoch_num, device, lr, run_num,
         mse_n = 0
         for iter, (frames, video_inds, frame_inds) in enumerate(loader):
             model.zero_grad()
-            for i in range(input.shape[1] - 1):
-                input = _to_one_hot(frames[:, i, :, :], input_channel)
-                output = _to_one_hot(frames[:, i + 1, :, :], input_channel)
-                pred = model(input)
+            for i in range(frames.shape[1] - 1):
+                input_ = _to_one_hot(frames[:, i, :, :], input_channel).float()
+                output = _to_one_hot(frames[:, i + 1, :, :], input_channel).float()
+                input_ = input_.to(device)
+                output = output.to(device)
+                pred, cell_state = model(input_)
                 loss = criterion(pred, output)
                 loss.backward()
                 optimizer.step()
@@ -46,17 +54,16 @@ def train(model,input_channel, loader, callback, epoch_num, device, lr, run_num,
             if iter % 200 is 0:
                 loader.set_description(
                     (
-                        'iter: {iter + 1}; mse: {recon_loss.item():.5f}; '
+                        'iter: {iter + 1}; mse: {loss.item():.5f}; '
                         f'avg mse: {mse_sum / mse_n:.5f}; '
                         f'lr: {lr:.5f}'
                     )
                 )
             if iter is 0 and epoch > 0:
                 writer.add_scalar('Loss/train', mse_sum / mse_n, epoch_num)
-                model.eval()
-                sample = pred[0, :image_samples, :, :]
-                callback(sample)
-                model.train()
+                sample = pred[:image_samples, :, :, :]
+                sample = one_hot_to_int(sample)
+                callback(sample, video_inds[i], epoch)
 
             torch.save(model.state_dict(),
-                       dir + 'checkpoints/videomnist/vqvae-lstm/{}/{}.pt'.format(*[run_num, str(epoch).zfill(5)]))
+                       '../video/checkpoints/videomnist/vqvae-lstm/{}/{}.pt'.format(*[run_num, str(epoch).zfill(5)]))
