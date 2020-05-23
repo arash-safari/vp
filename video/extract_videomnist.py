@@ -11,14 +11,15 @@ from video.dataloader import video_mnist_dataloader
 
 
 def extract_code(lmdb_env, loader, model, device):
+    print('extract code ')
     index = 0
 
     with lmdb_env.begin(write=True) as txn:
         pbar = tqdm(loader)
 
         for frames_batch, video_ind_batch, frame_ind_batch in pbar:
+            print('epoch {}'.format(index))
             for i,frames in enumerate(frames_batch):
-
                 frames = frames.to(device)
                 frames = frames.unsqueeze(1)
                 _, _, _ids = model.module.encode(frames)
@@ -37,4 +38,5 @@ def extract(model, lamda_name, device, video_batch):
 
     map_size = 100 * 1024 * 1024 * 1024
     env = lmdb.open(lamda_name, map_size=map_size)
+
     extract_code(env, loader, model, device)
