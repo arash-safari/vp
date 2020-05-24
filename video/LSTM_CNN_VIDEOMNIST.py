@@ -6,7 +6,7 @@ import torch.nn.functional as F
 
 class LSTM_CNN_VIDEOMNIST(nn.Module):
 
-    def __init__(self, input_channel, hidden_channel, lstm_kernel_size, cnn_kernel_size, device):
+    def __init__(self, input_channel, hidden_channel, cnn_kernel_size, device):
         super().__init__()
         self.type = type
         self.device = device
