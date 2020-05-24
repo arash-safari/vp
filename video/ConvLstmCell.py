@@ -8,28 +8,24 @@ class ConvLstmCell(nn.Module):
 
     def __init__(self, input_channel, hidden_channel, kernel_size, device):
         super().__init__()
-        self.state = None
         self.device = device
         self.input_channel = input_channel
         self.hidden_channel = hidden_channel
-        self.Gates = nn.Conv2d(input_channel + hidden_channel, 4 * hidden_channel, kernel_size, padding= kernel_size//2)
+        self.Gates = nn.Conv2d(input_channel + hidden_channel, 4 * hidden_channel, kernel_size,
+                               padding=kernel_size // 2)
 
     def forward(self, input, state=None):
         batch_size = input.data.size()[0]
         spatial_size = input.data.size()[2:]
 
-        if self.state is None:
-            self.state = state
-
-        if self.state is None:
+        if state is None:
             state_size = [batch_size, self.hidden_channel] + list(spatial_size)
-            self.state = (
+            state = (
                 Variable(torch.zeros(state_size)),
                 Variable(torch.zeros(state_size))
             )
 
-
-        prev_hidden, prev_cell = self.state
+        prev_hidden, prev_cell = state
         prev_cell = prev_cell.to(self.device)
         prev_hidden = prev_hidden.to(self.device)
 
@@ -52,5 +48,4 @@ class ConvLstmCell(nn.Module):
         cell = (remember_gate * prev_cell) + (in_gate * cell_gate)
 
         hidden = out_gate * f.tanh(cell)
-        self.state = hidden, cell
-        return self.state
+        return hidden, cell
