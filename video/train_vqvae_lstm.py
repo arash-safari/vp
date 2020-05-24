@@ -43,7 +43,8 @@ def train(model, input_channel, loader, callback, epoch_num, device, lr, run_num
                 output = _to_one_hot(frames[:, i + 1, :, :], input_channel).float()
                 input_ = input_.to(device)
                 output = output.to(device)
-                pred, cell_state = model(input_)
+                cell_states = model(input_)
+                pred , cell_state = cell_states[-1]
                 loss = criterion(pred, output)
                 loss.backward()
                 optimizer.step()
