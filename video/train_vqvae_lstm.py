@@ -48,8 +48,8 @@ def train(model, input_channel, loader, callback, epoch_num, device, lr, run_num
                 loss = criterion(pred, output)
                 loss.backward()
                 optimizer.step()
-                mse_sum += loss.item() * input.shape[0]
-                mse_n += input.shape[0]
+                mse_sum += loss.item() * input_.shape[0]
+                mse_n += input_.shape[0]
 
             lr = optimizer.param_groups[0]['lr']
             if iter % 200 is 0:
