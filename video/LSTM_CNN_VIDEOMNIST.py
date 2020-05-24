@@ -35,4 +35,4 @@ class LSTM_CNN_VIDEOMNIST(nn.Module):
             cells_state[2] = self.lstm3(self.bn2(F.relu(h1)), cells_state[2])
             h2, _ = cells_state[2]
 
-        return self.cnn(self.bn3(h2))
+        return F.relu(self.cnn(self.bn3(h2)))
