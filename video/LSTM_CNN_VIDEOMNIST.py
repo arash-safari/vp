@@ -25,8 +25,8 @@ class LSTM_CNN_VIDEOMNIST(nn.Module):
         self.bn3 = nn.BatchNorm2d(num_features=hidden_channel)
 
     def forward(self, inputs_, cells_state=[None] * 3):
-        for input_ in inputs_:
-            cells_state[0] = self.lstm1(input_, cells_state[0])
+        for i in range(inputs_.size()[1]):
+            cells_state[0] = self.lstm1(inputs_[:,i,:,:], cells_state[0])
             h0, _ = cells_state[0]
 
             cells_state[1] = self.lstm1(self.bn1(F.relu(h0)), cells_state[1])
