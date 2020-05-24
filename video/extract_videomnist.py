@@ -35,7 +35,6 @@ def extract(model, lamda_name, device, video_batch):
     loader = video_mnist_dataloader(dataset_video, video_batch, shuffle=False, num_workers=4, drop_last=True)
 
     map_size = 100 * 1024 * 1024 * 1024
-    lmdb.delete()
     env = lmdb.open(lamda_name, map_size=map_size)
 
     extract_code(env, loader, model, device)

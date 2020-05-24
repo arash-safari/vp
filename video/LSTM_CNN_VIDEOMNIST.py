@@ -19,12 +19,10 @@ class LSTM_CNN_VIDEOMNIST(nn.Module):
         )
 
     def forward(self, frames, cell_state=None):
-        result = torch.Tensor()
 
         for frame in frames:
             input_ = frame.copy()
             cell_state = self.lstm(input_, cell_state)
             hidden, cell = cell_state
-            result.append(self.cnn(hidden))
+            yield self.cnn(hidden)
 
-        return result
