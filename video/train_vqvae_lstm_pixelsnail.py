@@ -23,10 +23,10 @@ def one_hot_to_int(y):
     return y_trans
 
 
-def train(lstm_model,lstm_laysers, pixel_model,input_channel, loader, callback, epoch_num, device, lr, run_num, image_samples=1):
+def train(lstm_model,lstm_laysers,cnn_model, pixel_model,input_channel, loader, callback, epoch_num, device, lr, run_num, image_samples=1):
     writer_path = 'vqvae_videomnist_1_00099_lstm_pixelsnail'
 
-    model = LSTM_PixelSnail(lstm_laysers,lstm_model,pixel_model)
+    model = LSTM_PixelSnail(lstm_laysers,lstm_model,cnn_model,pixel_model)
     model = model.to(device)
     model = nn.DataParallel(model)
     criterion = nn.MSELoss()
