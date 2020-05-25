@@ -23,10 +23,10 @@ def one_hot_to_int(y):
     return y_trans
 
 
-def train(lstm_model,lstm_laysers,cnn_model, pixel_model,input_channel, loader, callback, epoch_num, device, lr, run_num, image_samples=1):
+def train(lstm_model,cnn_model, pixel_model,input_channel, loader, callback, epoch_num, device, lr, run_num, image_samples=1):
     writer_path = 'vqvae_videomnist_1_00099_lstm_pixelsnail'
 
-    model = LSTM_PixelSnail(lstm_laysers,lstm_model,cnn_model,pixel_model)
+    model = LSTM_PixelSnail(lstm_model,cnn_model,pixel_model)
     model = model.to(device)
     model = nn.DataParallel(model)
     criterion = nn.MSELoss()
@@ -42,7 +42,7 @@ def train(lstm_model,lstm_laysers,cnn_model, pixel_model,input_channel, loader, 
             model.zero_grad()
             inputs_ = []
             f0 = np.zeros((frames.shape[0],1,frames.shape[2],frames.shape[3]))
-            f0 = _to_one_hot(frames[:, i, :, :], input_channel).float()
+            f0 = _to_one_hot(f0, input_channel).float()
             f0 = f0.to(device)
             inputs_.append(f0)
             for i in range(frames.shape[1] - 1):
@@ -50,9 +50,9 @@ def train(lstm_model,lstm_laysers,cnn_model, pixel_model,input_channel, loader, 
                 input_ = input_.to(device)
                 inputs_.append(input_.unsqueeze(dim=1))
             inputs_ = torch.cat(inputs_, dim=1)
-            cells_state = [None] * lstm_laysers
+            cells_state = None
             for i in range(frames.shape[1] ):
-                pred,cells_state = model(inputs_[:, i:i+2, :, :],cells_state)
+                pred, cells_state = model(inputs_[:, i:i+2, :, :],cells_state)
 
                 target = _to_one_hot(frames[:, i + 1, :, :], input_channel).float()
                 target = target.to(device)

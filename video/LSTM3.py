@@ -16,7 +16,9 @@ class LSTM3(nn.Module):
         self.lstm3 = ConvLstmCell(hidden_channel, hidden_channel, 3, device)
         self.bn3 = nn.BatchNorm2d(num_features=hidden_channel)
 
-    def forward(self, input_, cells_state=[None] * 3):
+    def forward(self, input_, cells_state=None):
+        if cells_state is None:
+            cells_state = [None] * 3
         cells_state[0] = self.lstm1(input_, cells_state[0])
         h0, _ = cells_state[0]
         cells_state[1] = self.lstm2(self.bn1(F.relu(h0)), cells_state[1])
