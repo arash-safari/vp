@@ -56,12 +56,10 @@ def train(lstm_model,cnn_model, pixel_model,input_channel, loader, callback, epo
             inputs_ = torch.cat(inputs_, dim=1)
             cells_state = None
             for i in range(frames.shape[1] ):
-                pred, cells_state = model(inputs_[:, i:i+2, :, :],cells_state)
 
-                target = _to_one_hot(frames[:, i + 1, :, :], input_channel).float()
-                target = target.to(device)
+                pred, cells_state = model(inputs_[:, i:i+2, :, :, :],cells_state)
 
-                loss = criterion(pred, target)
+                loss = criterion(pred, inputs_[:, i+1, :, :, :])
                 loss.backward()
 
                 optimizer.step()

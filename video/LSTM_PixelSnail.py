@@ -13,8 +13,8 @@ class LSTM_PixelSnail(nn.Module):
         self.cnn_model = cnn_model
 
     def forward(self, inputs_, cells_state):
-        input_ = inputs_[:, 0, :, :]
-        target = inputs_[:, 1, :, :]
+        input_ = inputs_[:, 0, :, :, :]
+        target = inputs_[:, 1, :, :, :]
         lstm_out, cells_state = self.lstm_model(input_, cells_state)
         cnn_out = self.cnn_model(lstm_out)
         out, _ = self.pixel_model(target, condition=cnn_out)
