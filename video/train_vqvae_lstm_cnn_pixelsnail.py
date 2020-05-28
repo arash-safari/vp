@@ -48,8 +48,9 @@ def train(lstm_model,cnn_model, pixel_model,input_channel, loader, callback, epo
             inputs_.append(f0)
             for i in range(frames.shape[1] - 1):
                 input_ = _to_one_hot(frames[:, i, :, :], input_channel).float()
+                print(input_.size())
                 input_ = input_.to(device)
-                print(input.size())
+
                 inputs_.append(input_.unsqueeze(dim=1))
 
             inputs_ = torch.cat(inputs_, dim=1)
