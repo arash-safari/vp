@@ -397,12 +397,10 @@ class PixelSNAIL(nn.Module):
     def forward(self, input, condition=None, cache=None):
         if cache is None:
             cache = {}
-        print(input.shape)
-        batch, channel , height, width = input.shape
-
-        # input = (
-        #     F.one_hot(input, self.n_class).permute(0, 3, 1, 2).type_as(self.background)
-        # )
+        batch, height, width = input.shape
+        input = (
+            F.one_hot(input, self.n_class).permute(0, 3, 1, 2).type_as(self.background)
+        )
         horizontal = shift_down(self.horizontal(input))
         vertical = shift_right(self.vertical(input))
         out = horizontal + vertical
