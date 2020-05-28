@@ -41,7 +41,7 @@ def train(lstm_model,cnn_model, pixel_model,input_channel, loader, callback, epo
         for iter, (frames, video_inds, frame_inds) in enumerate(loader):
             model.zero_grad()
             inputs_ = []
-            f0 = np.zeros((frames.shape[0],input_channel,frames.shape[2],frames.shape[3]))
+            f0 = np.zeros((frames.shape[0],input_channel,frames.shape[2],frames.shape[3]),dtype=float)
             f0 = f0.to(device)
             inputs_.append(f0)
             for i in range(frames.shape[1] - 1):
