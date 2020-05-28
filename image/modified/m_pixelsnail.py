@@ -88,6 +88,7 @@ class PixelSNAIL(nn.Module):
         # input = (
         #     F.one_hot(input, self.n_class).permute(0, 3, 1, 2).type_as(self.background)
         # )
+        print(input.shape)
         horizontal = shift_down(self.horizontal(input))
         vertical = shift_right(self.vertical(input))
         out = horizontal + vertical
