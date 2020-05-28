@@ -16,9 +16,9 @@ class LSTM_PixelSnail(nn.Module):
         input_ = inputs_[:, 0, :, :, :]
         target = inputs_[:, 1, :, :, :]
         lstm_out, cells_state = self.lstm_model(input_, cells_state)
-        print('lstm_out')
-        print(lstm_out.size())
         cnn_out = self.cnn_model(lstm_out)
+        print('cnn_out')
+        print(cnn_out.size())
         out, _ = self.pixel_model(target, condition=cnn_out)
 
         return out, cells_state
