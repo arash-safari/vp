@@ -83,7 +83,7 @@ class PixelSNAIL(nn.Module):
     def forward(self, input, condition=None, cache=None):
         if cache is None:
             cache = {}
-        batch, channel, height, width = input.shape
+        batch, channel, height, width = input.size()
 
         # input = (
         #     F.one_hot(input, self.n_class).permute(0, 3, 1, 2).type_as(self.background)
@@ -101,11 +101,11 @@ class PixelSNAIL(nn.Module):
                 condition = condition[:, :, :height, :]
 
             else:
-                condition = (
-                    F.one_hot(condition, self.n_class)
-                        .permute(0, 3, 1, 2)
-                        .type_as(self.background)
-                )
+                # condition = (
+                #     F.one_hot(condition, self.n_class)
+                #         .permute(0, 3, 1, 2)
+                #         .type_as(self.background)
+                # )
                 condition = self.cond_resnet(condition)
                 condition = F.interpolate(condition, scale_factor=2)
                 cache['condition'] = condition.detach().clone()
