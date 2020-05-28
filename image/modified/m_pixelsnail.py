@@ -21,6 +21,7 @@ class PixelSNAIL(nn.Module):
             res_channel,
             attention=True,
             dropout=0.1,
+            cond_channel = 0,
             n_cond_res_block=0,
             cond_res_channel=0,
             cond_res_kernel=3,
@@ -68,7 +69,7 @@ class PixelSNAIL(nn.Module):
 
         if n_cond_res_block > 0:
             self.cond_resnet = CondResNet(
-                n_class, cond_res_channel, cond_res_kernel, n_cond_res_block
+                cond_channel, cond_res_channel, cond_res_kernel, n_cond_res_block
             )
 
         out = []
