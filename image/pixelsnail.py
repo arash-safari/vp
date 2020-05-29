@@ -170,8 +170,7 @@ class GatedResBlock(nn.Module):
 
         if condition is not None:
             condition = self.condition(condition)
-            print(condition.size())
-            print(out.size())
+            print('condition: {}, out: {}'.format(condition.shape,out.shape))
             out += condition
             # out = out + condition.view(condition.shape[0], 1, 1, condition.shape[1])
 
