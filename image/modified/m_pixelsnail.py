@@ -85,7 +85,7 @@ class PixelSNAIL(nn.Module):
         if cache is None:
             cache = {}
         batch, channel, height, width = input.size()
-
+        print('condition:{}'.format(condition.shape))
         # input = (
         #     F.one_hot(input, self.n_class).permute(0, 3, 1, 2).type_as(self.background)
         # )
