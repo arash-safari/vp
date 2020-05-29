@@ -107,7 +107,7 @@ class PixelSNAIL(nn.Module):
                 #         .type_as(self.background)
                 # )
                 condition = self.cond_resnet(condition)
-                condition = F.interpolate(condition, scale_factor=2)
+                # condition = F.interpolate(condition, scale_factor=2)
                 cache['condition'] = condition.detach().clone()
                 condition = condition[:, :, :height, :]
         print('after condition: {}'.format(condition.shape))
