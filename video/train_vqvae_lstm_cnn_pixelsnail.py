@@ -57,7 +57,7 @@ def train(lstm_model,cnn_model, pixel_model,input_channel, loader, callback, epo
 
                 pred, cells_state = model(inputs_[:, i:i+2, :, :, :],cells_state)
 
-                print(cells_state.shape)
+                print('cells_state:{}'.format(type(cells_state)))
                 loss = criterion(pred, inputs_[:, i+1, :, :, :])
                 loss.backward()
 
