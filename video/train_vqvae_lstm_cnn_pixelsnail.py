@@ -51,7 +51,7 @@ def train(lstm_model,cnn_model, pixel_model,input_channel, loader, callback, epo
 
             inputs_ = torch.cat(inputs_, dim=1)
             states = []
-            for i in range(frames.shape[1] ):
+            for i in range(frames.shape[1] -1):
                 model.zero_grad()
                 if len(states) > 0:
                     cells_state = states
