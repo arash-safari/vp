@@ -50,11 +50,14 @@ def train(lstm_model,cnn_model, pixel_model,input_channel, loader, callback, epo
                 inputs_.append(input_.unsqueeze(dim=1))
 
             inputs_ = torch.cat(inputs_, dim=1)
-            cells_state = None
+            states = None
             for i in range(frames.shape[1] ):
                 model.zero_grad()
+                cells_state = states
                 pred, cells_state = model(inputs_[:, i:i+2, :, :, :],cells_state)
-                cells_state = cells_state.detach()
+                for state in cells_state:
+                    states.append(state.detach())
+
                 loss = criterion(pred, inputs_[:, i+1, :, :, :])
                 loss.backward()
 
