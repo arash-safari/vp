@@ -85,7 +85,7 @@ class PixelSNAIL(nn.Module):
         if cache is None:
             cache = {}
         batch, channel, height, width = input.size()
-        print('condition:{}'.format(condition.shape))
+
         # input = (
         #     F.one_hot(input, self.n_class).permute(0, 3, 1, 2).type_as(self.background)
         # )
@@ -94,7 +94,7 @@ class PixelSNAIL(nn.Module):
         out = horizontal + vertical
 
         background = self.background[:, :, :height, :].expand(batch, 2, height, width)
-
+        print('height: {},condition: {}'.format(height,condition.shape))
         if condition is not None:
             if 'condition' in cache:
                 condition = cache['condition']
@@ -110,7 +110,7 @@ class PixelSNAIL(nn.Module):
                 condition = F.interpolate(condition, scale_factor=2)
                 cache['condition'] = condition.detach().clone()
                 condition = condition[:, :, :height, :]
-
+        print('condition: {}'.format(condition.shape))
         for block in self.blocks:
             out = block(out, background, condition=condition)
 
