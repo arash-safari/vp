@@ -160,7 +160,7 @@ class GatedResBlock(nn.Module):
 
     def forward(self, input, aux_input=None, condition=None):
         out = self.conv1(self.activation(input))
-        print('gateblock condition:{}'.format(condition))
+        # print('gateblock condition:{}'.format(condition))
         if aux_input is not None:
             out = out + self.aux_conv(self.activation(aux_input))
 
@@ -170,7 +170,7 @@ class GatedResBlock(nn.Module):
 
         if condition is not None:
             condition = self.condition(condition)
-            print('condition: {}, out: {}'.format(condition.shape,out.shape))
+            # print('condition: {}, out: {}'.format(condition.shape,out.shape))
             out += condition
             # out = out + condition.view(condition.shape[0], 1, 1, condition.shape[1])
 
@@ -292,7 +292,7 @@ class PixelBlock(nn.Module):
         out = input
 
         for resblock in self.resblocks:
-            print('resblock condition:{}'.shape(condition.shape))
+            # print('resblock condition:{}'.shape(condition.shape))
             out = resblock(out, condition=condition)
 
         if self.attention:
