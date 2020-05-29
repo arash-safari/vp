@@ -54,7 +54,7 @@ def train(lstm_model,cnn_model, pixel_model,input_channel, loader, callback, epo
             for i in range(frames.shape[1] ):
                 model.zero_grad()
                 pred, cells_state = model(inputs_[:, i:i+2, :, :, :],cells_state)
-
+                cells_state = cells_state.detach()
                 loss = criterion(pred, inputs_[:, i+1, :, :, :])
                 loss.backward()
 
@@ -63,7 +63,6 @@ def train(lstm_model,cnn_model, pixel_model,input_channel, loader, callback, epo
                 mse_sum += loss.item() * input_.shape[0]
                 mse_n += input_.shape[0]
                 lr = optimizer.param_groups[0]['lr']
-            cells_state.detach()
             if iter % 200 is 0:
                 loader.set_description(
                     (
