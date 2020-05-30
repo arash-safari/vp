@@ -82,7 +82,7 @@ def train(lstm_model,cnn_model, pixel_model,input_channel, loader, callback, epo
                 writer.add_scalar('Loss/train', mse_sum / mse_n, epoch_num)
                 sample = pred[:image_samples, :, :, :]
                 sample = one_hot_to_int(sample)
-                callback(sample, frames[:image_samples, -1, :, :].to(device), epoch)
+                callback(sample, frames[:image_samples, -1, :, :].to(device), epoch, iter)
 
             torch.save(model.state_dict(),
                        '../video/checkpoints/videomnist/vqvae-lstm-pixelsnail/{}/{}.pt'.format(*[run_num, str(epoch).zfill(5)]))
