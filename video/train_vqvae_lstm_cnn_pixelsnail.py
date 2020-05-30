@@ -85,6 +85,6 @@ def train(lstm_model,cnn_model, pixel_model,input_channel, loader, callback, epo
                 callback(sample, frames[:image_samples, -1, :, :].to(device), epoch)
 
             torch.save(model.state_dict(),
-                       '../video/checkpoints/videomnist/vqvae-lstm/{}/{}.pt'.format(*[run_num, str(epoch).zfill(5)]))
+                       '../video/checkpoints/videomnist/vqvae-lstm-pixelsnail/{}/{}.pt'.format(*[run_num, str(epoch).zfill(5)]))
 
 
