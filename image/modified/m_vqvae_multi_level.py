@@ -184,7 +184,7 @@ class Decoder(nn.Module):
 class VQVAE_ML(nn.Module):
     def __init__(
         self,
-        in_channel=3,
+        in_channel=1,
         channel=128,
         n_res_block=2,
         n_res_channel=32,
@@ -227,7 +227,9 @@ class VQVAE_ML(nn.Module):
         return dec, diff
 
     def encode(self, input):
+
         enc = self.enc(input)
+
         bottleneck = self.quantize_conv(enc ).permute(0, 2, 3, 1)
         ids = []
         quants = []
