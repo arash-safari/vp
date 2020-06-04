@@ -214,7 +214,7 @@ class VQVAE_ML(nn.Module):
             channel,
             n_res_block,
             n_res_channel,
-            stride=8,
+            stride=4,
         )
 
     def forward(self, input):
