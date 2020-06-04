@@ -129,6 +129,8 @@ class Encoder(nn.Module):
         self.blocks = nn.Sequential(*blocks)
 
     def forward(self, input):
+
+        print('encode input = {}'.format(input.shape))
         return self.blocks(input)
 
 
