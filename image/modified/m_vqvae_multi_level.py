@@ -185,13 +185,13 @@ class VQVAE_ML(nn.Module):
     def __init__(
         self,
         in_channel=1,
-        channel=128,
+        channel=32,
         n_res_block=2,
-        n_res_channel=32,
-        embed_dim=64,
-        n_level=9,
-        stride = 4,
+        n_res_channel=16,
+        embed_dim=16,
+        n_level=32,
         decay=0.99,
+        stride = 4,
     ):
         super().__init__()
 
