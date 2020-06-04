@@ -24,7 +24,7 @@ def one_hot_to_int(y):
 
 
 def train(lstm_model,cnn_model, pixel_model,input_channel, loader, callback, epoch_num, device, lr, run_num, image_samples=1):
-    writer_path = 'vqvae_videomnist_1_00099_lstm_pixelsnail'
+    writer_path = 'vqvae_videomnist_{}_00099_lstm_pixelsnail'.format(run_num)
 
     model = LSTM_PixelSnail(lstm_model,cnn_model,pixel_model)
     model = model.to(device)
