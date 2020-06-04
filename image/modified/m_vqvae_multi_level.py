@@ -36,7 +36,7 @@ class Quantize(nn.Module):
         self.register_buffer('cluster_size', torch.zeros(n_embed))
         self.register_buffer('embed_avg', embed.clone())
 
-    def forward(self, input):
+    def forward(self, input, n_level):
         flatten = input.reshape(-1, self.dim)
         dist = (
             flatten.pow(2).sum(1, keepdim=True)
@@ -92,7 +92,19 @@ class Encoder(nn.Module):
     def __init__(self, in_channel, channel, n_res_block, n_res_channel, stride):
         super().__init__()
 
-        if stride == 4:
+        if stride == 8:
+            blocks = [
+                nn.Conv2d(in_channel, channel // 2, 4, stride=2, padding=1),
+                nn.ReLU(inplace=True),
+                nn.Conv2d(channel // 2, channel, 4, stride=2, padding=1),
+                nn.ReLU(inplace=True),
+                nn.Conv2d(channel, channel, 3, padding=1),
+                nn.Conv2d(in_channel, channel // 2, 4, stride=2, padding=1),
+                nn.ReLU(inplace=True),
+                nn.Conv2d(channel // 2, channel, 3, padding=1),
+            ]
+
+        elif stride == 4:
             blocks = [
                 nn.Conv2d(in_channel, channel // 2, 4, stride=2, padding=1),
                 nn.ReLU(inplace=True),
@@ -107,6 +119,7 @@ class Encoder(nn.Module):
                 nn.ReLU(inplace=True),
                 nn.Conv2d(channel // 2, channel, 3, padding=1),
             ]
+
 
         for i in range(n_res_block):
             blocks.append(ResBlock(channel, n_res_channel))
@@ -132,7 +145,19 @@ class Decoder(nn.Module):
 
         blocks.append(nn.ReLU(inplace=True))
 
-        if stride == 4:
+        if stride == 8:
+            blocks.extend(
+                [
+                    nn.ConvTranspose2d(channel, channel // 2, 4, stride=2, padding=1),
+                    nn.ReLU(inplace=True),
+                    nn.ConvTranspose2d(
+                        channel // 2, out_channel, 4, stride=2, padding=1
+                    ),
+                    nn.ConvTranspose2d(channel, out_channel, 4, stride=2, padding=1),
+                ]
+            )
+
+        elif stride == 4:
             blocks.extend(
                 [
                     nn.ConvTranspose2d(channel, channel // 2, 4, stride=2, padding=1),
@@ -167,10 +192,14 @@ class VQVAE_ML(nn.Module):
     ):
         super().__init__()
 
-        self.enc_b = Encoder(in_channel, channel, n_res_block, n_res_channel, stride=4)
-        self.enc_t = Encoder(channel, channel, n_res_block, n_res_channel, stride=2)
-        self.quantize_conv_t = nn.Conv2d(channel, embed_dim, 1)
-        self.quantizes = Quantize(embed_dim, n_level)
+        self.enc = Encoder(in_channel, channel, n_res_block, n_res_channel, stride=8)
+        # self.enc_t = Encoder(channel, channel, n_res_block, n_res_channel, stride=2)
+        self.quantize_conv = nn.Conv2d(channel, embed_dim, 1)
+        self.n_level = n_level
+        self.quantizes = []
+        n_embed = 2
+        for i in range(n_level):
+            self.quantizes.append(Quantize(embed_dim,n_embed))
         # self.dec_t = Decoder(
         #     embed_dim, embed_dim, channel, n_res_block, n_res_channel, stride=2
         # )
@@ -185,47 +214,46 @@ class VQVAE_ML(nn.Module):
             channel,
             n_res_block,
             n_res_channel,
-            stride=4,
+            stride=8,
         )
 
     def forward(self, input):
-        quant_t, quant_b, diff, _, _ = self.encode(input)
-        dec = self.decode(quant_t, quant_b)
+        quant, diff, _ = self.encode(input)
+        dec = self.decode(quant)
 
         return dec, diff
 
     def encode(self, input):
-        enc_b = self.enc_b(input)
-        enc_t = self.enc_t(enc_b)
+        enc = self.enc(input)
+        bottleneck = self.quantize_conv(enc ).permute(0, 2, 3, 1)
+        ids = []
+        quants = []
+        diffs = None
+        quant_sum = []
+        for quantize in self.quantizes:
+            quant, diff, id = quantize(bottleneck)
+            quant = quant.permute(0, 3, 1, 2)
+            diff = diff.unsqueeze(0)
+            print(diff.shape)
+            diffs += diff
+            print(quant.shape)
+            quant_sum += quant
+            quants.append(quant)
+            ids.append(id)
+            bottleneck = diff
 
-        quant_t = self.quantize_conv_t(enc_t).permute(0, 2, 3, 1)
-        quant_t, diff_t, id_t = self.quantize_t(quant_t)
-        quant_t = quant_t.permute(0, 3, 1, 2)
-        diff_t = diff_t.unsqueeze(0)
+        return quant_sum, diffs, quants, ids
 
-        dec_t = self.dec_t(quant_t)
-        enc_b = torch.cat([dec_t, enc_b], 1)
-
-        quant_b = self.quantize_conv_b(enc_b).permute(0, 2, 3, 1)
-        quant_b, diff_b, id_b = self.quantize_b(quant_b)
-        quant_b = quant_b.permute(0, 3, 1, 2)
-        diff_b = diff_b.unsqueeze(0)
-
-        return quant_t, quant_b, diff_t + diff_b, id_t, id_b
-
-    def decode(self, quant_t, quant_b):
-        upsample_t = self.upsample_t(quant_t)
-        quant = torch.cat([upsample_t, quant_b], 1)
+    def decode(self, quant):
         dec = self.dec(quant)
-
         return dec
 
-    def decode_code(self, code_t, code_b):
-        quant_t = self.quantize_t.embed_code(code_t)
-        quant_t = quant_t.permute(0, 3, 1, 2)
-        quant_b = self.quantize_b.embed_code(code_b)
-        quant_b = quant_b.permute(0, 3, 1, 2)
-
-        dec = self.decode(quant_t, quant_b)
+    def decode_code(self, codes):
+        quants = None
+        for i, code in enumerate(codes):
+            quant = self.quantizes.embed_code(code)
+            quant = quant.permute(0, 3, 1, 2)
+            quants += quant
+        dec = self.decode(quants)
 
         return dec
