@@ -190,11 +190,12 @@ class VQVAE_ML(nn.Module):
         n_res_channel=32,
         embed_dim=64,
         n_level=9,
+        stride = 4,
         decay=0.99,
     ):
         super().__init__()
 
-        self.enc = Encoder(in_channel, channel, n_res_block, n_res_channel, stride=8)
+        self.enc = Encoder(in_channel, channel, n_res_block, n_res_channel, stride=stride)
         # self.enc_t = Encoder(channel, channel, n_res_block, n_res_channel, stride=2)
         self.quantize_conv = nn.Conv2d(channel, embed_dim, 1)
         self.n_level = n_level
@@ -216,7 +217,7 @@ class VQVAE_ML(nn.Module):
             channel,
             n_res_block,
             n_res_channel,
-            stride=4,
+            stride=stride,
         )
 
     def forward(self, input):
