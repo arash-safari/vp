@@ -209,7 +209,7 @@ class VQVAE_ML(nn.Module):
         for i in range(n_level):
             self.quantizes.append(Quantize(embed_dim, n_embed))
             self.quantizes_conv.append(nn.Conv2d(embed_dim, embed_dim, 1))
-            self.bns.append(nn.BatchNorm1d(embed_dim))
+            self.bns.append(nn.BatchNorm2d(embed_dim))
         # self.quantizes = Quantize(embed_dim, n_embed,decay=decay)
         # self.dec_t = Decoder(
         #     embed_dim, embed_dim, channel, n_res_block, n_res_channel, stride=2
