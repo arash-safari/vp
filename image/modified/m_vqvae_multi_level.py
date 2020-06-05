@@ -262,7 +262,7 @@ class VQVAE_ML(nn.Module):
 
             bottleneck -= quant
 
-        return quant_sum, diffs, quants, ids
+        return quant_sum, diff, quants, ids
 
     def decode(self, quant):
         dec = self.dec(quant)
