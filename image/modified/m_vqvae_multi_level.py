@@ -251,16 +251,15 @@ class VQVAE_ML(nn.Module):
 
             if diffs is None:
                 diffs = diff
+                quant_sum = quant
+                quants = quant.unsqueeze(1)
+                ids = id.unsqueeze(1)
             else:
                 diffs += diff
-
-            if quant_sum is None:
-                quant_sum = quant
-            else:
                 quant_sum += quant
+                quants = torch.cat(quants,quant,dim=1)
+                ids = torch.cat(ids, id, dim=1)
 
-            quants.append(quant)
-            ids.append(id)
             bottleneck -= quant
 
         return quant_sum, diffs, quants, ids
