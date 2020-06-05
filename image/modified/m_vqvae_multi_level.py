@@ -50,7 +50,7 @@ class Quantize(nn.Module):
         )
         print('quantize dist {}'.format(dist.shape))
         _, embed_ind = (-dist).max(1)
-        print('quantize dist {}'.format(embed_ind.shape))
+        print('quantize embed_ind {}'.format(embed_ind.shape))
         embed_onehot = F.one_hot(embed_ind, self.n_embed).type(flatten.dtype)
         embed_ind = embed_ind.view(*input.shape[:-1])
         quantize = self.embed_code(embed_ind)
@@ -70,7 +70,7 @@ class Quantize(nn.Module):
 
         diff = (quantize.detach() - input).pow(2).mean()
         quantize = input + (quantize - input).detach()
-
+        print('quantize quantize {}'.format(quantize.shape))
         return quantize, diff, embed_ind
 
     def embed_code(self, embed_id):
