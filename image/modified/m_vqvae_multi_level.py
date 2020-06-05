@@ -226,7 +226,7 @@ class VQVAE_ML(nn.Module):
 
     def forward(self, input):
         quant, diff, _,_ = self.encode(input)
-        print('quant shape {}'.format(quant.shape))
+        # print('quant shape {}'.format(quant.shape))
         dec = self.decode(quant)
 
         return dec, diff
