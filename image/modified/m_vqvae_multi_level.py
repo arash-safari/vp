@@ -40,9 +40,9 @@ class Quantize(nn.Module):
         flatten = input.reshape(-1, self.dim)
 
         dist = (
-            flatten.pow(2).sum(1, keepdim=True)
-            - 2 * flatten @ self.embed
-            + self.embed.pow(2).sum(0, keepdim=True)
+                flatten.pow(2).sum(1, keepdim=True)
+                - 2 * flatten @ self.embed
+                + self.embed.pow(2).sum(0, keepdim=True)
         )
         _, embed_ind = (-dist).max(1)
         embed_onehot = F.one_hot(embed_ind, self.n_embed).type(flatten.dtype)
@@ -57,7 +57,7 @@ class Quantize(nn.Module):
             self.embed_avg.data.mul_(self.decay).add_(1 - self.decay, embed_sum)
             n = self.cluster_size.sum()
             cluster_size = (
-                (self.cluster_size + self.eps) / (n + self.n_embed * self.eps) * n
+                    (self.cluster_size + self.eps) / (n + self.n_embed * self.eps) * n
             )
             embed_normalized = self.embed_avg / cluster_size.unsqueeze(0)
             self.embed.data.copy_(embed_normalized)
@@ -69,6 +69,7 @@ class Quantize(nn.Module):
 
     def embed_code(self, embed_id):
         return F.embedding(embed_id, self.embed.transpose(0, 1))
+
 
 class ResBlock(nn.Module):
     def __init__(self, in_channel, channel):
@@ -91,7 +92,6 @@ class ResBlock(nn.Module):
 class Encoder(nn.Module):
     def __init__(self, in_channel, channel, n_res_block, n_res_channel, stride):
         super().__init__()
-
         if stride == 8:
             blocks = [
                 nn.Conv2d(in_channel, channel // 2, 4, stride=2, padding=1),
@@ -120,7 +120,6 @@ class Encoder(nn.Module):
                 nn.Conv2d(channel // 2, channel, 3, padding=1),
             ]
 
-
         for i in range(n_res_block):
             blocks.append(ResBlock(channel, n_res_channel))
 
@@ -129,14 +128,13 @@ class Encoder(nn.Module):
         self.blocks = nn.Sequential(*blocks)
 
     def forward(self, input):
-
         print('encode input = {}'.format(input.shape))
         return self.blocks(input)
 
 
 class Decoder(nn.Module):
     def __init__(
-        self, in_channel, out_channel, channel, n_res_block, n_res_channel, stride
+            self, in_channel, out_channel, channel, n_res_block, n_res_channel, stride
     ):
         super().__init__()
 
@@ -183,15 +181,15 @@ class Decoder(nn.Module):
 
 class VQVAE_ML(nn.Module):
     def __init__(
-        self,
-        in_channel=1,
-        channel=32,
-        n_res_block=2,
-        n_res_channel=16,
-        embed_dim=16,
-        n_level=32,
-        decay=0.99,
-        stride = 4,
+            self,
+            in_channel=1,
+            channel=32,
+            n_res_block=2,
+            n_res_channel=16,
+            embed_dim=16,
+            n_level=32,
+            decay=0.99,
+            stride=4,
     ):
         super().__init__()
 
@@ -202,7 +200,7 @@ class VQVAE_ML(nn.Module):
         self.quantizes = []
         n_embed = 2
         for i in range(n_level):
-            self.quantizes.append(Quantize(embed_dim,n_embed))
+            self.quantizes.append(Quantize(embed_dim, n_embed))
         # self.dec_t = Decoder(
         #     embed_dim, embed_dim, channel, n_res_block, n_res_channel, stride=2
         # )
@@ -229,8 +227,9 @@ class VQVAE_ML(nn.Module):
     def encode(self, input):
 
         enc = self.enc(input)
+        print('enc len'.format(len(enc)))
         print('enc shape'.format(enc.shape))
-        bottleneck = self.quantize_conv(enc ).permute(0, 2, 3, 1)
+        bottleneck = self.quantize_conv(enc).permute(0, 2, 3, 1)
         ids = []
         quants = []
         diffs = None
