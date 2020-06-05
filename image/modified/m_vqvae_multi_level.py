@@ -41,16 +41,16 @@ class Quantize(nn.Module):
 
     def forward(self, input):
         flatten = input.reshape(-1, self.dim)
-        print('flatten input {}'.format(flatten.shape))
-        print('quantize embed {}'.format(self.embed))
+        # print('flatten input {}'.format(flatten.shape))
+        # print('quantize embed {}'.format(self.embed))
         dist = (
                 flatten.pow(2).sum(1, keepdim=True)
                 - 2 * flatten @ self.embed
                 + self.embed.pow(2).sum(0, keepdim=True)
         )
-        print('quantize dist {}'.format(dist.shape))
+        # print('quantize dist {}'.format(dist.shape))
         _, embed_ind = (-dist).max(1)
-        print('quantize embed_ind {}'.format(embed_ind.shape))
+        # print('quantize embed_ind {}'.format(embed_ind.shape))
         embed_onehot = F.one_hot(embed_ind, self.n_embed).type(flatten.dtype)
         embed_ind = embed_ind.view(*input.shape[:-1])
         quantize = self.embed_code(embed_ind)
@@ -70,7 +70,7 @@ class Quantize(nn.Module):
 
         diff = (quantize.detach() - input).pow(2).mean()
         quantize = input + (quantize - input).detach()
-        print('quantize quantize {}'.format(quantize.shape))
+        # print('quantize quantize {}'.format(quantize.shape))
         return quantize, diff, embed_ind
 
     def embed_code(self, embed_id):
@@ -226,6 +226,7 @@ class VQVAE_ML(nn.Module):
 
     def forward(self, input):
         quant, diff, _,_ = self.encode(input)
+        print('quant shape {}'.format(quant.shape))
         dec = self.decode(quant)
 
         return dec, diff
@@ -233,9 +234,9 @@ class VQVAE_ML(nn.Module):
     def encode(self, input):
         enc = self.enc(input)
 
-        print('encode input = {}'.format(input.shape))
-        print('enc'.format(enc))
-        print('enc shape'.format(enc.shape))
+        # print('encode input = {}'.format(input.shape))
+        # print('enc'.format(enc))
+        # print('enc shape'.format(enc.shape))
 
         bottleneck = self.quantize_conv(enc).permute(0, 2, 3, 1)
         ids = []
@@ -243,7 +244,7 @@ class VQVAE_ML(nn.Module):
         diffs = None
         quant_sum = []
         for quantize in self.quantizes:
-            print('bottleneck shape'.format(bottleneck.shape))
+            # print('bottleneck shape'.format(bottleneck.shape))
             quant, diff, id = quantize(bottleneck)
             quant = quant.permute(0, 3, 1, 2)
             diff = diff.unsqueeze(0)
