@@ -238,14 +238,14 @@ class VQVAE_ML(nn.Module):
     def encode(self, input):
         enc = self.enc(input)
 
-        bottleneck = self.quantize_conv(enc).permute(0, 2, 3, 1)
+        bottleneck = self.quantize_conv(enc)
         ids = None
         quants = None
         diffs = None
         quant_sum = None
         for i,quantize in enumerate(self.quantizes):
             # print('bottleneck shape'.format(bottleneck.shape))
-            quant, diff, id = quantize(bottleneck)
+            quant, diff, id = quantize(bottleneck.permute(0, 2, 3, 1))
             print(bottleneck.shape)
             print(quant.shape)
             quant = quant.permute(0, 3, 1, 2)
