@@ -194,7 +194,7 @@ class VQVAE_ML(nn.Module):
             embed_dim=16,
             n_level=1,
             n_embed = 512,
-            decay=0.99,
+            decay=0.80,
             stride=4,
     ):
         super().__init__()
@@ -207,7 +207,7 @@ class VQVAE_ML(nn.Module):
         n_embed = 512
         for i in range(n_level):
             self.quantizes.append(Quantize(embed_dim, n_embed))
-        # self.quantizes = Quantize(embed_dim, n_embed)
+        # self.quantizes = Quantize(embed_dim, n_embed,decay=decay)
         # self.dec_t = Decoder(
         #     embed_dim, embed_dim, channel, n_res_block, n_res_channel, stride=2
         # )
