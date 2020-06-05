@@ -205,9 +205,11 @@ class VQVAE_ML(nn.Module):
         self.n_level = n_level
         self.quantizes = nn.ModuleList()
         self.quantizes_conv = nn.ModuleList()
+        self.bns = nn.ModuleList()
         for i in range(n_level):
             self.quantizes.append(Quantize(embed_dim, n_embed))
             self.quantizes_conv.append(nn.Conv2d(embed_dim, embed_dim, 1))
+            self.bns.append(nn.BatchNorm1d(embed_dim))
         # self.quantizes = Quantize(embed_dim, n_embed,decay=decay)
         # self.dec_t = Decoder(
         #     embed_dim, embed_dim, channel, n_res_block, n_res_channel, stride=2
@@ -258,7 +260,7 @@ class VQVAE_ML(nn.Module):
                 quants = torch.cat((quants,quant.unsqueeze(1)),dim=1)
                 ids = torch.cat((ids, id.unsqueeze(1)), dim=1)
             bottleneck -= quant
-            bottleneck = self.quantizes_conv[i](bottleneck)
+            bottleneck = self.bns[i](self.quantizes_conv[i](bottleneck))
         return quant_sum, diffs, quants, ids
 
     def decode(self, quant):
