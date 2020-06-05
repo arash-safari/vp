@@ -204,8 +204,10 @@ class VQVAE_ML(nn.Module):
         self.quantize_conv = nn.Conv2d(channel, embed_dim, 1)
         self.n_level = n_level
         self.quantizes = nn.ModuleList()
+        self.quantizes_conv = nn.ModuleList()
         for i in range(n_level):
             self.quantizes.append(Quantize(embed_dim, n_embed))
+            self.quantizes_conv.append(nn.Conv2d(embed_dim, embed_dim, 1))
         # self.quantizes = Quantize(embed_dim, n_embed,decay=decay)
         # self.dec_t = Decoder(
         #     embed_dim, embed_dim, channel, n_res_block, n_res_channel, stride=2
@@ -235,11 +237,11 @@ class VQVAE_ML(nn.Module):
         enc = self.enc(input)
 
         bottleneck = self.quantize_conv(enc).permute(0, 2, 3, 1)
-        ids = []
-        quants = []
+        ids = None
+        quants = None
         diffs = None
-        quant_sum = []
-        for quantize in self.quantizes:
+        quant_sum = None
+        for i,quantize in enumerate(self.quantizes):
             # print('bottleneck shape'.format(bottleneck.shape))
             quant, diff, id = quantize(bottleneck)
             quant = quant.permute(0, 3, 1, 2)
@@ -255,7 +257,7 @@ class VQVAE_ML(nn.Module):
                 quant_sum += quant
                 quants = torch.cat((quants,quant.unsqueeze(1)),dim=1)
                 ids = torch.cat((ids, id.unsqueeze(1)), dim=1)
-
+            quant = self.quantizes_conv[i](quant)
             bottleneck -= quant
 
         return quant_sum, diffs, quants, ids
