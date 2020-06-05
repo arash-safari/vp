@@ -43,13 +43,11 @@ class Quantize(nn.Module):
         flatten = input.reshape(-1, self.dim)
         print('flatten input {}'.format(flatten.shape))
         print('quantize embed {}'.format(self.embed))
-
         dist = (
                 flatten.pow(2).sum(1, keepdim=True)
                 - 2 * flatten @ self.embed
-
+                + self.embed.pow(2).sum(0, keepdim=True)
         )
-        dist += self.embed.pow(2).sum(0, keepdim=True)
         print('quantize dist {}'.format(dist.shape))
         _, embed_ind = (-dist).max(1)
         print('quantize embed_ind {}'.format(embed_ind.shape))
