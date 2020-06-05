@@ -227,7 +227,7 @@ class VQVAE_ML(nn.Module):
         enc = self.enc(input)
 
         print('encode input = {}'.format(input.shape))
-        print('enc len'.format(enc.size()))
+        print('enc'.format(enc))
         print('enc shape'.format(enc.shape))
 
         bottleneck = self.quantize_conv(enc).permute(0, 2, 3, 1)
