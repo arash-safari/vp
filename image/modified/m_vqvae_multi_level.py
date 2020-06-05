@@ -260,7 +260,7 @@ class VQVAE_ML(nn.Module):
 
             quants.append(quant)
             ids.append(id)
-            bottleneck = diff.to(self.device)
+            bottleneck -= quant
 
         return quant_sum, diffs, quants, ids
 
