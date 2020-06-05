@@ -34,7 +34,7 @@ class Quantize(nn.Module):
         self.decay = decay
         self.eps = eps
 
-        embed = torch.randn(dim, n_embed,device=device)
+        embed = torch.randn(dim, n_embed)
         self.register_buffer('embed', embed)
         self.register_buffer('cluster_size', torch.zeros(n_embed))
         self.register_buffer('embed_avg', embed.clone())
@@ -197,7 +197,7 @@ class VQVAE_ML(nn.Module):
             stride=4,
     ):
         super().__init__()
-
+        self.device = 'cuda'
         self.enc = Encoder(in_channel, channel, n_res_block, n_res_channel, stride=stride)
         # self.enc_t = Encoder(channel, channel, n_res_block, n_res_channel, stride=2)
         self.quantize_conv = nn.Conv2d(channel, embed_dim, 1)
@@ -252,7 +252,7 @@ class VQVAE_ML(nn.Module):
             quant_sum += quant
             quants.append(quant)
             ids.append(id)
-            bottleneck = diff
+            bottleneck = diff.to(self.device)
 
             return quant_sum, diffs, quants, ids
 
