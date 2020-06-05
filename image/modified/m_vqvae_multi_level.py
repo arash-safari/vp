@@ -128,7 +128,6 @@ class Encoder(nn.Module):
         self.blocks = nn.Sequential(*blocks)
 
     def forward(self, input):
-        print('encode input = {}'.format(input.shape))
         return self.blocks(input)
 
 
@@ -225,10 +224,12 @@ class VQVAE_ML(nn.Module):
         return dec, diff
 
     def encode(self, input):
-
         enc = self.enc(input)
+
+        print('encode input = {}'.format(input.shape))
         print('enc len'.format(len(enc)))
         print('enc shape'.format(enc.shape))
+
         bottleneck = self.quantize_conv(enc).permute(0, 2, 3, 1)
         ids = []
         quants = []
