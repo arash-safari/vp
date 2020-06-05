@@ -216,7 +216,7 @@ class VQVAE_ML(nn.Module):
         #     embed_dim, embed_dim, 4, stride=2, padding=1
         # )
         self.dec = Decoder(
-            embed_dim + embed_dim,
+            embed_dim ,
             in_channel,
             channel,
             n_res_block,
@@ -258,7 +258,6 @@ class VQVAE_ML(nn.Module):
                 diffs += diff
                 quant_sum += quant
                 quants = torch.cat((quants,quant.unsqueeze(1)),dim=1)
-                print(quants.shape)
                 ids = torch.cat((ids, id.unsqueeze(1)), dim=1)
 
             bottleneck -= quant
