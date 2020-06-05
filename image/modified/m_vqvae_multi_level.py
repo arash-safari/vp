@@ -246,6 +246,8 @@ class VQVAE_ML(nn.Module):
         for i,quantize in enumerate(self.quantizes):
             # print('bottleneck shape'.format(bottleneck.shape))
             quant, diff, id = quantize(bottleneck)
+            print(bottleneck.shape)
+            print(quant.shape)
             quant = quant.permute(0, 3, 1, 2)
             diff = diff.unsqueeze(0)
 
