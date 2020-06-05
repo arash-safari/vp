@@ -38,7 +38,7 @@ class Quantize(nn.Module):
 
     def forward(self, input):
         flatten = input.reshape(-1, self.dim)
-        print('quantize input {}'.format(input))
+        print('flatten input {}'.format(flatten.shape))
         print('quantize embed {}'.format(self.embed))
         dist = (
                 flatten.pow(2).sum(1, keepdim=True)
@@ -46,6 +46,7 @@ class Quantize(nn.Module):
                 + self.embed.pow(2).sum(0, keepdim=True)
         )
         _, embed_ind = (-dist).max(1)
+        print('quantize embed_ind {}'.format(self.embed_ind))
         embed_onehot = F.one_hot(embed_ind, self.n_embed).type(flatten.dtype)
         embed_ind = embed_ind.view(*input.shape[:-1])
         quantize = self.embed_code(embed_ind)
