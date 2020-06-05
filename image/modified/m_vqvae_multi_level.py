@@ -69,8 +69,8 @@ from image.vqvae import Quantize
 #
 #         return quantize, diff, embed_ind
 
-    def embed_code(self, embed_id):
-        return F.embedding(embed_id, self.embed.transpose(0, 1))
+    # def embed_code(self, embed_id):
+    #     return F.embedding(embed_id, self.embed.transpose(0, 1))
 
 
 class ResBlock(nn.Module):
