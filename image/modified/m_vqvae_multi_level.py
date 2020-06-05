@@ -192,7 +192,7 @@ class VQVAE_ML(nn.Module):
             n_res_block=2,
             n_res_channel=16,
             embed_dim=16,
-            n_level=9,
+            n_level=1,
             decay=0.99,
             stride=4,
     ):
@@ -203,7 +203,7 @@ class VQVAE_ML(nn.Module):
         self.quantize_conv = nn.Conv2d(channel, embed_dim, 1)
         self.n_level = n_level
         self.quantizes = nn.ModuleList()
-        n_embed = 2
+        n_embed = 512
         for i in range(n_level):
             self.quantizes.append(Quantize(embed_dim, n_embed))
         # self.quantizes = Quantize(embed_dim, n_embed)
@@ -233,10 +233,6 @@ class VQVAE_ML(nn.Module):
 
     def encode(self, input):
         enc = self.enc(input)
-
-        # print('encode input = {}'.format(input.shape))
-        # print('enc'.format(enc))
-        # print('enc shape'.format(enc.shape))
 
         bottleneck = self.quantize_conv(enc).permute(0, 2, 3, 1)
         ids = []
