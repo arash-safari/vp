@@ -38,6 +38,7 @@ class Quantize(nn.Module):
 
     def forward(self, input):
         flatten = input.reshape(-1, self.dim)
+
         dist = (
             flatten.pow(2).sum(1, keepdim=True)
             - 2 * flatten @ self.embed
@@ -68,7 +69,6 @@ class Quantize(nn.Module):
 
     def embed_code(self, embed_id):
         return F.embedding(embed_id, self.embed.transpose(0, 1))
-
 
 class ResBlock(nn.Module):
     def __init__(self, in_channel, channel):
@@ -236,6 +236,7 @@ class VQVAE_ML(nn.Module):
         diffs = None
         quant_sum = []
         for quantize in self.quantizes:
+            print('bottleneck shape'.format(bottleneck.shape))
             quant, diff, id = quantize(bottleneck)
             quant = quant.permute(0, 3, 1, 2)
             diff = diff.unsqueeze(0)
