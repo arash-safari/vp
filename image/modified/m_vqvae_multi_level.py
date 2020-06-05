@@ -257,8 +257,8 @@ class VQVAE_ML(nn.Module):
             else:
                 diffs += diff
                 quant_sum += quant
-                quants = torch.cat(quants,quant,dim=1)
-                ids = torch.cat(ids, id, dim=1)
+                quants = torch.cat(quants,quant.unsqueeze(1),dim=1)
+                ids = torch.cat(ids, id.unsqueeze(1), dim=1)
 
             bottleneck -= quant
 
