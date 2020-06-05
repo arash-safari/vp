@@ -192,7 +192,7 @@ class VQVAE_ML(nn.Module):
             n_res_block=2,
             n_res_channel=16,
             embed_dim=16,
-            n_level=32,
+            n_level=9,
             decay=0.99,
             stride=4,
     ):
@@ -258,6 +258,7 @@ class VQVAE_ML(nn.Module):
                 diffs += diff
                 quant_sum += quant
                 quants = torch.cat((quants,quant.unsqueeze(1)),dim=1)
+                print(quants.shape)
                 ids = torch.cat((ids, id.unsqueeze(1)), dim=1)
 
             bottleneck -= quant
