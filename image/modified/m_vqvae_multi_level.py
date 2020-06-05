@@ -38,7 +38,8 @@ class Quantize(nn.Module):
 
     def forward(self, input):
         flatten = input.reshape(-1, self.dim)
-        print('quantize input {}'.format(input.shape))
+        print('quantize input {}'.format(input))
+        print('quantize embed {}'.format(self.embed))
         dist = (
                 flatten.pow(2).sum(1, keepdim=True)
                 - 2 * flatten @ self.embed
