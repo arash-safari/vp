@@ -1,6 +1,9 @@
+import sys
 import torch
 from torch import nn
 from torch.nn import functional as F
+sys.path.append('../')
+
 from image.vqvae import Quantize
 
 # Copyright 2018 The Sonnet Authors. All Rights Reserved.
