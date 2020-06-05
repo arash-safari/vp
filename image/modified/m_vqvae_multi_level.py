@@ -229,7 +229,7 @@ class VQVAE_ML(nn.Module):
     def encode(self, input):
 
         enc = self.enc(input)
-
+        print('enc shape'.format(enc.shape))
         bottleneck = self.quantize_conv(enc ).permute(0, 2, 3, 1)
         ids = []
         quants = []
