@@ -247,10 +247,17 @@ class VQVAE_ML(nn.Module):
             quant, diff, id = quantize(bottleneck)
             quant = quant.permute(0, 3, 1, 2)
             diff = diff.unsqueeze(0)
-            print(diff.shape)
-            diffs += diff
-            print(quant.shape)
-            quant_sum += quant
+
+            if diffs is None:
+                diffs = diff
+            else:
+                diffs += diff
+
+            if quant_sum is None:
+                quant_sum = quant
+            else:
+                quant_sum += quant
+
             quants.append(quant)
             ids.append(id)
             bottleneck = diff.to(self.device)
