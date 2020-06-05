@@ -202,11 +202,11 @@ class VQVAE_ML(nn.Module):
         # self.enc_t = Encoder(channel, channel, n_res_block, n_res_channel, stride=2)
         self.quantize_conv = nn.Conv2d(channel, embed_dim, 1)
         self.n_level = n_level
-        # self.quantizes = []
+        self.quantizes = nn.ModuleList()
         n_embed = 2
-        # for i in range(n_level):
-        #     self.quantizes.append(Quantize(embed_dim, n_embed))
-        self.quantizes = Quantize(embed_dim, n_embed)
+        for i in range(n_level):
+            self.quantizes.append(Quantize(embed_dim, n_embed))
+        # self.quantizes = Quantize(embed_dim, n_embed)
         # self.dec_t = Decoder(
         #     embed_dim, embed_dim, channel, n_res_block, n_res_channel, stride=2
         # )
@@ -242,18 +242,18 @@ class VQVAE_ML(nn.Module):
         quants = []
         diffs = None
         quant_sum = []
-        # for quantize in self.quantizes:
-        print('bottleneck shape'.format(bottleneck.shape))
-        quant, diff, id = self.quantizes(bottleneck)
-        quant = quant.permute(0, 3, 1, 2)
-        diff = diff.unsqueeze(0)
-        print(diff.shape)
-        diffs += diff
-        print(quant.shape)
-        quant_sum += quant
-        quants.append(quant)
-        ids.append(id)
-        # bottleneck = diff.to(self.device)
+        for quantize in self.quantizes:
+            print('bottleneck shape'.format(bottleneck.shape))
+            quant, diff, id = quantize(bottleneck)
+            quant = quant.permute(0, 3, 1, 2)
+            diff = diff.unsqueeze(0)
+            print(diff.shape)
+            diffs += diff
+            print(quant.shape)
+            quant_sum += quant
+            quants.append(quant)
+            ids.append(id)
+            bottleneck = diff.to(self.device)
 
         return quant_sum, diffs, quants, ids
 
