@@ -204,7 +204,6 @@ class VQVAE_ML(nn.Module):
         self.quantize_conv = nn.Conv2d(channel, embed_dim, 1)
         self.n_level = n_level
         self.quantizes = nn.ModuleList()
-        n_embed = 512
         for i in range(n_level):
             self.quantizes.append(Quantize(embed_dim, n_embed))
         # self.quantizes = Quantize(embed_dim, n_embed,decay=decay)
