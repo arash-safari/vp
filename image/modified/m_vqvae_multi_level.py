@@ -262,7 +262,7 @@ class VQVAE_ML(nn.Module):
                 quants = torch.cat((quants,quant.unsqueeze(1)),dim=1)
                 ids = torch.cat((ids, id.unsqueeze(1)), dim=1)
             bottleneck -= quant
-            bottleneck = F.relu(self.bns[i](self.quantizes_conv[i](bottleneck)))
+            # bottleneck = F.relu(self.bns[i](self.quantizes_conv[i](bottleneck)))
         return quant_sum, diffs, quants, ids
 
     def decode(self, quant):
