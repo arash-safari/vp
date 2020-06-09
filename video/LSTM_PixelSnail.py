@@ -10,7 +10,7 @@ class LSTM_PixelSnail(nn.Module):
         y_tensor = y.view(*y.size(), -1)
         zeros = torch.zeros(*y.size(), num_classes, dtype=y.dtype).to('cuda')
 
-        return zeros.scatter(scatter_dim, y_tensor, 1).permute(0, 3, 1, 2)
+        return zeros.scatter(scatter_dim, y_tensor, 1)
 
     def __init__(self, lstm_model, cnn_model, pixel_model):
         super().__init__()
