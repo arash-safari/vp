@@ -25,7 +25,7 @@ class LSTM_PixelSnail(nn.Module):
     @torch.no_grad()
     def sample(self, input_, cells_state, temperature=1.0):
         size = input_.size()
-        row = torch.zeros( *size, dtype=torch.int64)
+        row = torch.zeros( *size)
         cache = {}
         lstm_out, cells_state = self.lstm_model(input_, cells_state)
         cnn_out = self.cnn_model(lstm_out)
