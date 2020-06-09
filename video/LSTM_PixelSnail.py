@@ -39,7 +39,7 @@ class LSTM_PixelSnail(nn.Module):
         for i in tqdm(range(size[0])):
             for j in range(size[1]):
                 out, cache = self.pixel_model(row[: ,:, : i + 1, :], condition=cnn_out, cache=cache)
-                out = self._to_one_hot(out, size[3]).float()
+                out = self._to_one_hot(out, size[1]).float()
                 print(out.size())
                 prob = torch.softmax(out[:, :, i, j] / temperature, 1)
                 sample = torch.multinomial(prob, 1).squeeze(-1)
