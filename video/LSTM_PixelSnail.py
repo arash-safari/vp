@@ -8,7 +8,7 @@ class LSTM_PixelSnail(nn.Module):
     def _to_one_hot(self, y, num_classes):
         scatter_dim = len(y.size())
         y_tensor = y.view(*y.size(), -1)
-        zeros = torch.zeros(*y.size(), num_classes, dtype=y.dtype)
+        zeros = torch.zeros(*y.size(), num_classes, dtype=y.dtype).to('cuda')
 
         return zeros.scatter(scatter_dim, y_tensor, 1).permute(0, 3, 1, 2)
 
