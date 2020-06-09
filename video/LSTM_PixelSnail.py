@@ -5,6 +5,12 @@ from tqdm import tqdm
 
 
 class LSTM_PixelSnail(nn.Module):
+    def _to_one_hot(self, y, num_classes):
+        scatter_dim = len(y.size())
+        y_tensor = y.view(*y.size(), -1)
+        zeros = torch.zeros(*y.size(), num_classes, dtype=y.dtype)
+
+        return zeros.scatter(scatter_dim, y_tensor, 1).permute(0, 3, 1, 2)
 
     def __init__(self, lstm_model, cnn_model, pixel_model):
         super().__init__()
@@ -33,6 +39,7 @@ class LSTM_PixelSnail(nn.Module):
         for i in tqdm(range(size[0])):
             for j in range(size[1]):
                 out, cache = self.pixel_model(row[: ,:, : i + 1, :], condition=cnn_out, cache=cache)
+                out = self._to_one_hot(out, size[3]).float()
                 print(out.size())
                 prob = torch.softmax(out[:, :, i, j] / temperature, 1)
                 sample = torch.multinomial(prob, 1).squeeze(-1)
