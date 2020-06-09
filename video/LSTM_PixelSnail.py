@@ -25,16 +25,16 @@ class LSTM_PixelSnail(nn.Module):
     @torch.no_grad()
     def sample(self, input_, cells_state, temperature=1.0):
         size = input_.size()
-        row = torch.zeros(input_.shape[0], *size, dtype=torch.int64)
+        row = torch.zeros( *size, dtype=torch.int64)
         cache = {}
         lstm_out, cells_state = self.lstm_model(input_, cells_state)
         cnn_out = self.cnn_model(lstm_out)
 
         for i in tqdm(range(size[0])):
             for j in range(size[1]):
-                out, cache = self.pixel_model(row[:, : i + 1, :], condition=cnn_out, cache=cache)
+                out, cache = self.pixel_model(row[: ,:, : i + 1, :], condition=cnn_out, cache=cache)
                 prob = torch.softmax(out[:, :, i, j] / temperature, 1)
                 sample = torch.multinomial(prob, 1).squeeze(-1)
-                row[:, i, j] = sample
+                row[:,:, i, j] = sample
 
         return row, cells_state
