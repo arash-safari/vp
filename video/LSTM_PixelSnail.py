@@ -46,7 +46,7 @@ class LSTM_PixelSnail(nn.Module):
                 # sample = self._to_one_hot(sample, size[1]).float()
                 # print(sample.size())
 
-                print(row.size())
+                # print(row.size())
                 row[:,0, i, j] = sample
 
 
