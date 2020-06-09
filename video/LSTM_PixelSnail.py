@@ -35,6 +35,9 @@ class LSTM_PixelSnail(nn.Module):
                 out, cache = self.pixel_model(row[: ,:, : i + 1, :], condition=cnn_out, cache=cache)
                 prob = torch.softmax(out[:, :, i, j] / temperature, 1)
                 sample = torch.multinomial(prob, 1).squeeze(-1)
+                print(sample.size())
+                print(row.size())
                 row[:,:, i, j] = sample
+
 
         return row, cells_state
