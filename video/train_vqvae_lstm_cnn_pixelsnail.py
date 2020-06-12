@@ -70,7 +70,6 @@ def train(lstm_model,cnn_model, pixel_model,input_channel, loader, callback, epo
                 mse_sum += loss.item() * input_.shape[0]
                 mse_n += input_.shape[0]
                 lr = optimizer.param_groups[0]['lr']
-            if iter % 200 is 0:
                 loader.set_description(
                     (
                         'iter: {iter + 1}; mse: {loss.item():.5f}; '
@@ -78,6 +77,7 @@ def train(lstm_model,cnn_model, pixel_model,input_channel, loader, callback, epo
                         f'lr: {lr:.5f}'
                     )
                 )
+
             if iter % 200 is 0:
                 writer.add_scalar('Loss/train', mse_sum / mse_n, epoch_num)
                 sample = pred[:image_samples, :, :, :]
