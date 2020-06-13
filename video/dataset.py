@@ -36,7 +36,7 @@ class Kth_Breakfast_VideoDataset(Dataset):
         self.frame_len = int(frame_len)
         b_path = path + '/kth_breakfast/'
         all_dirs = os.walk(b_path)
-        print(all_dirs)
+        print(list(all_dirs))
         # self.frames = np.load(path)
         # self.frames = self.frames.swapaxes(0, 1).astype(np.float32)
         # self.frames[self.frames > 0] = 1.
