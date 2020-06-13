@@ -4,6 +4,7 @@ from collections import namedtuple
 import lmdb
 import pickle
 import torch
+import os
 
 CodeRowVideoMnist = namedtuple('CodeRowVideoMnist', ['ids', 'video_ind'])
 
@@ -19,6 +20,31 @@ class MnistVideoDataset(Dataset):
         video_len = frames_shape[1]
         self.sample_per_video = video_len - frame_len + 1
         self.length = videos_num * self.sample_per_video
+
+    def __len__(self):
+        return self.length
+
+    def __getitem__(self, index):
+        video_ind = int(index / self.sample_per_video)
+        frame_ind = index - video_ind * self.sample_per_video
+
+        return self.frames[video_ind, frame_ind: frame_ind + self.frame_len, :, :], video_ind, frame_ind
+
+
+class Kth_Breakfast_VideoDataset(Dataset):
+    def __init__(self, path, frame_len):
+        self.frame_len = int(frame_len)
+        b_path = path + '/kth_breakfast/'
+        all_dirs = os.walk(b_path)
+        print(all_dirs)
+        # self.frames = np.load(path)
+        # self.frames = self.frames.swapaxes(0, 1).astype(np.float32)
+        # self.frames[self.frames > 0] = 1.
+        # frames_shape = self.frames.shape
+        # videos_num = frames_shape[0]
+        # video_len = frames_shape[1]
+        # self.sample_per_video = video_len - frame_len + 1
+        # self.length = videos_num * self.sample_per_video
 
     def __len__(self):
         return self.length
@@ -63,5 +89,3 @@ class MnistVideoCodeLMDBDataset(Dataset):
             row = pickle.loads(txn.get(key))
 
         return torch.from_numpy(row.ids[frame_ind: frame_ind + self.frame_len]), row.video_ind, frame_ind
-
-

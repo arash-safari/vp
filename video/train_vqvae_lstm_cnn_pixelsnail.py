@@ -77,7 +77,7 @@ def train(lstm_model,cnn_model, pixel_model,input_channel, loader, callback, epo
                         f'lr: {lr:.5f}'
                     )
                 )
-
+    
             if iter % 200 is 0:
                 writer.add_scalar('Loss/train', mse_sum / mse_n, epoch_num)
                 sample = pred[:image_samples, :, :, :]
