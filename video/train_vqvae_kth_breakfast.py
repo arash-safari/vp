@@ -17,13 +17,13 @@ def get_optimizer(model, lr):
 
 def train(model, epoch_num, batch_size, lr, device, run_num, image_samples):
     dir = '/home/stipendiater/mohamadi/vp/video/'
-    dataset = Kth_Breakfast_VideoDataset(dir + 'datasets//kth/kth_breakfast/', 1)
+    dataset = Kth_Breakfast_VideoDataset(dir + 'datasets/kth/kth_breakfast/', 1)
     loader = video_mnist_dataloader(dataset, batch_size, shuffle=True, num_workers=4, drop_last=True)
     optimizer = get_optimizer(model, lr)
     model = model.to(device)
     model = nn.DataParallel(model)
     criterion = nn.MSELoss()
-    writer = SummaryWriter(log_dir='logs/{}_{}'.format(*['videomnist-vqvae', run_num]))
+    writer = SummaryWriter(log_dir='logs/{}_{}'.format(*['kth-breakfast-vqvae', run_num]))
 
     for epoch in range(epoch_num):
         latent_loss_weight = 0.25
@@ -67,7 +67,7 @@ def train(model, epoch_num, batch_size, lr, device, run_num, image_samples):
                 out = (out > 0.5).float()
                 utils.save_image(
                     torch.cat([sample, out], 0),
-                    dir + 'samples/videomnist/vqvae/{}/{}.png'.format(*[run_num, epoch]),
+                    dir + 'samples/kth-breakfast/vqvae/{}/{}.png'.format(*[run_num, epoch]),
                     nrow=image_samples,
                     normalize=True,
                     range=(-1, 1),
@@ -75,4 +75,4 @@ def train(model, epoch_num, batch_size, lr, device, run_num, image_samples):
                 model.train()
 
         torch.save(model.state_dict(),
-                   dir + 'checkpoints/videomnist/vqvae/{}/{}.pt'.format(*[run_num, str(epoch).zfill(5)]))
+                   dir + 'checkpoints/kth-breakfast/vqvae/{}/{}.pt'.format(*[run_num, str(epoch).zfill(5)]))
