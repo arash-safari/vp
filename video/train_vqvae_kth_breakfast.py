@@ -17,7 +17,7 @@ def get_optimizer(model, lr):
 
 def train(model, epoch_num, batch_size, lr, device, run_num, image_samples):
     dir = '/home/stipendiater/mohamadi/vp/video/'
-    dataset = Kth_Breakfast_VideoDataset(dir + 'datasets/kth/kth_breakfast/', 1)
+    dataset = Kth_Breakfast_VideoDataset(dir + 'datasets/kth', 1)
     loader = video_mnist_dataloader(dataset, batch_size, shuffle=True, num_workers=4, drop_last=True)
     optimizer = get_optimizer(model, lr)
     model = model.to(device)
