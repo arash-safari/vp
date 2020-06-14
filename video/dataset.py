@@ -62,7 +62,8 @@ class Kth_Breakfast_VideoDataset(Dataset):
                 self.index += 1
 
             self.videos.append(frames)
-
+        cap.release()
+        cv2.destroyAllWindows()
     def __len__(self):
         return self.index
 
