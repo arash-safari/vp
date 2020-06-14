@@ -39,6 +39,7 @@ class Kth_Breakfast_VideoDataset(Dataset):
         bpath = path + '/kth_breakfast/'
         self.videos = []
         all_subdirs = os.listdir(bpath).sort()
+        print(bpath)
         print(all_subdirs)
         self.video_index = {}
         self.frame_video_index = {}
