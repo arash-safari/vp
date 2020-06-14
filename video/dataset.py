@@ -5,6 +5,8 @@ import lmdb
 import pickle
 import torch
 import os
+import cv2
+import imageio
 
 CodeRowVideoMnist = namedtuple('CodeRowVideoMnist', ['ids', 'video_ind'])
 
@@ -34,26 +36,38 @@ class MnistVideoDataset(Dataset):
 class Kth_Breakfast_VideoDataset(Dataset):
     def __init__(self, path, frame_len):
         self.frame_len = int(frame_len)
-        b_path = path + '/kth_breakfast/'
-        all_dirs = os.listdir(b_path)
-        print(all_dirs)
-        # self.frames = np.load(path)
-        # self.frames = self.frames.swapaxes(0, 1).astype(np.float32)
-        # self.frames[self.frames > 0] = 1.
-        # frames_shape = self.frames.shape
-        # videos_num = frames_shape[0]
-        # video_len = frames_shape[1]
-        # self.sample_per_video = video_len - frame_len + 1
-        # self.length = videos_num * self.sample_per_video
+        bpath = path + '/kth_breakfast/'
+        self.videos = []
+        all_subdirs = os.listdir(bpath).sort()
+        self.video_index = {}
+        self.frame_video_index = {}
+        self.index = 0
+        for vid_ind, subdir in enumerate(all_subdirs):
+            filepath = bpath + subdir + '/kinect_rgb.mp4'
+            cap = cv2.VideoCapture(filepath)
+            if not cap.isOpened():
+                print("Error opening video stream or file")
+            frames = []
+            while cap.isOpened():
+                ret, frame = cap.read()
+                if ret:
+                    frames.append(frame)
+                else:
+                    break
+            self.video_index[vid_ind] = self.index
+            for i in range(len(frames) - frame_len + 1):
+                self.frame_video_index[self.index] = vid_ind
+                self.index += 1
+
+            self.videos.append(frames)
 
     def __len__(self):
-        return self.length
+        return self.index
 
-    def __getitem__(self, index):
-        video_ind = int(index / self.sample_per_video)
-        frame_ind = index - video_ind * self.sample_per_video
-
-        return self.frames[video_ind, frame_ind: frame_ind + self.frame_len, :, :], video_ind, frame_ind
+    def __getitem__(self, i):
+        vid_ind = self.frame_video_index[i]
+        frame_ind = self.video_index[vid_ind] - i
+        return self.videos[vid_ind][frame_ind: frame_ind + self.frame_len][:, :], vid_ind, frame_ind
 
 
 class MnistVideoCodeLMDBDataset(Dataset):
