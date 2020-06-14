@@ -41,7 +41,7 @@ class Kth_Breakfast_VideoDataset(Dataset):
         all_subdirs = os.listdir(bpath)[:-1]
         print(bpath)
         print(all_subdirs)
-        all_subdirs =all_subdirs.sort()
+        all_subdirs.sort()
         self.video_index = {}
         self.frame_video_index = {}
         self.index = 0
