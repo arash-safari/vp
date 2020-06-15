@@ -44,7 +44,7 @@ class Kth_Breakfast_VideoDataset(Dataset):
         self.frame_video_index = {}
         self.index = 0
         for vid_ind, subdir in enumerate(all_subdirs):
-            print(vid_ind)
+            print(subdir)
             filepath = bpath + subdir + '/kinect_rgb.mp4'
             cap = cv2.VideoCapture(filepath)
             if not cap.isOpened():

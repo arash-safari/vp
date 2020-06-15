@@ -23,18 +23,25 @@ def one_hot_to_int(y):
     return y_trans
 
 
-def train(lstm_model,cnn_model, pixel_model,input_channel, loader, callback, epoch_num, device, lr, run_num, image_samples=1):
+def train(chekpoint, lstm_model,cnn_model, pixel_model,input_channel, loader, callback, epoch_num, device, lr, run_num, image_samples=1):
     writer_path = 'vqvae_videomnist_{}_00099_lstm_pixelsnail'.format(run_num)
 
     model = LSTM_PixelSnail(lstm_model,cnn_model,pixel_model)
     model = model.to(device)
     model = nn.DataParallel(model)
+
+    if chekpoint >0:
+        ckpt_path = "../video/checkpoints/videomnist/vqvae-lstm-pixelsnail/{}/{}.pt".format(run_num, str(chekpoint).zfill(5))
+        model.load_state_dict(torch.load(ckpt_path))
+
     criterion = nn.MSELoss()
     optimizer = get_optimizer(model, lr)
 
     writer = SummaryWriter(log_dir='logs/{}_{}'.format(*[writer_path, run_num]))
-
-    for epoch in range(epoch_num):
+    epoch_start = 0
+    if chekpoint >0 :
+        epoch_start = chekpoint + 1
+    for epoch in range(epoch_start, epoch_num + epoch_start):
         loader = tqdm(loader)
         mse_sum = 0
         mse_n = 0
