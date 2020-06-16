@@ -7,6 +7,7 @@ import torch
 import os
 import cv2
 import imageio
+import h5py
 
 CodeRowVideoMnist = namedtuple('CodeRowVideoMnist', ['ids', 'video_ind'])
 
@@ -33,44 +34,22 @@ class MnistVideoDataset(Dataset):
         return self.frames[video_ind, frame_ind: frame_ind + self.frame_len, :, :], video_ind, frame_ind
 
 
-class Kth_Breakfast_VideoDataset(Dataset):
-    def __init__(self, path, frame_len):
-        self.frame_len = int(frame_len)
-        bpath = path + '/kth_breakfast/'
-        self.videos = []
-        all_subdirs = os.listdir(bpath)[:-1]
-        all_subdirs.sort()
-        self.video_index = {}
-        self.frame_video_index = {}
-        self.index = 0
-        for vid_ind, subdir in enumerate(all_subdirs):
-            print(subdir)
-            filepath = bpath + subdir + '/kinect_rgb.mp4'
-            cap = cv2.VideoCapture(filepath)
-            if not cap.isOpened():
-                print("Error opening video stream or file")
-            frames = []
-            while cap.isOpened():
-                ret, frame = cap.read()
-                if ret:
-                    frames.append(frame)
-                else:
-                    break
-            self.video_index[vid_ind] = self.index
-            for i in range(len(frames) - frame_len + 1):
-                self.frame_video_index[self.index] = vid_ind
-                self.index += 1
+class Hdf5Dataset(Dataset):
+    def __init__(self, path, group_name):
+        file = h5py.File(path, "r+")
+        self.path = path
+        self.frame_len = file.attrs["total"]
+        self.group_name = group_name
+        self.group = file[group_name]
 
-            self.videos.append(frames)
-        cap.release()
-        cv2.destroyAllWindows()
     def __len__(self):
-        return self.index
+        return self.frame_len
 
     def __getitem__(self, i):
-        vid_ind = self.frame_video_index[i]
-        frame_ind = self.video_index[vid_ind] - i
-        return self.videos[vid_ind][frame_ind: frame_ind + self.frame_len][:, :], vid_ind, frame_ind
+        if self.group == None:
+            file = h5py.File(self.path, "r+")
+            self.group = file[self.group_name]
+        return self.group[f"video_{i}"]
 
 
 class MnistVideoCodeLMDBDataset(Dataset):
