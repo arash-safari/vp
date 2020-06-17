@@ -48,14 +48,13 @@ def train(model, epoch_num, batch_size, lr, device, run_num, image_samples):
             mse_n += video.shape[0]
 
             lr = optimizer.param_groups[0]['lr']
-            if iter % 200 is 0:
-                loader.set_description(
-                    (
-                        'iter: {iter + 1}; mse: {recon_loss.item():.5f}; '
-                        f'latent: {latent_loss.item():.3f}; avg mse: {mse_sum / mse_n:.5f}; '
-                        f'lr: {lr:.5f}'
-                    )
+            loader.set_description(
+                (
+                    'iter: {iter + 1}; mse: {recon_loss.item():.5f}; '
+                    f'latent: {latent_loss.item():.3f}; avg mse: {mse_sum / mse_n:.5f}; '
+                    f'lr: {lr:.5f}'
                 )
+            )
             if iter is 0 and epoch > 0:
                 writer.add_scalar('Loss/train', mse_sum / mse_n, epoch_num)
                 model.eval()
