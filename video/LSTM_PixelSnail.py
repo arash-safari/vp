@@ -45,10 +45,10 @@ class LSTM_PixelSnail(nn.Module):
                 # print(prob.size())
                 sample = torch.multinomial(prob, 1).squeeze(-1)
                 # print('befor one hot {}'.format(sample.size()))
-                sample = self._to_one_hot(sample, size[1]).float()
+                # sample = self._to_one_hot(sample, size[1]).float()
                 # print('after one hot {}'.format(sample.size()))
 
-                # print(row.size())
+                print(row.size())
                 row[:,:, i, j] = sample
 
 
