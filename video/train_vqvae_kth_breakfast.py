@@ -35,7 +35,7 @@ def train(model, epoch_num, batch_size, lr, device, run_num, image_samples):
             # for img in video:
             # video = video.permute(0,3,1,2)
             model.zero_grad()
-            video = video.to(device)
+            video = video.float().to(device)
             out, latent_loss = model(video)
             recon_loss = criterion(out, video)
             latent_loss = latent_loss.mean()
