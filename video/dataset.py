@@ -50,7 +50,7 @@ class Hdf5Dataset(Dataset):
         if self.group == None:
             file = h5py.File(self.path, "r+")
             self.group = file[self.group_name]
-        return   np.array(self.group[f"video_{i}"]).astype("uint8")
+        return   np.array(self.group[f"vid_part_{i}"]).astype("uint8")
 
 
 
