@@ -52,7 +52,7 @@ class Hdf5Dataset(Dataset):
             self.group = file[self.group_name]
             print(f"vid_part_{i}")
             print(np.array(self.group[f"vid_part_{i}"]).astype("uint8").shape)
-        return   np.array(self.group[f"vid_part_{i}"]).astype("uint8")
+        return   np.array(self.group[f"vid_part_{i}"]).astype("uint8").astype(np.float)
 
 
 
