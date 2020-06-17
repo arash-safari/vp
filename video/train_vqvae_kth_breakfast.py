@@ -33,7 +33,7 @@ def train(model, epoch_num, batch_size, lr, device, run_num, image_samples):
 
         for iter, video in enumerate(loader):
             # for img in video:
-            video = video.permute(0,3,1,2)
+            # video = video.permute(0,3,1,2)
             model.zero_grad()
             video = video.to(device)
             out, latent_loss = model(video)
