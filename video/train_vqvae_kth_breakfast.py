@@ -34,7 +34,7 @@ def train(model, epoch_num, batch_size, lr, device, run_num, image_samples):
         for iter, video in enumerate(loader):
             for img in video:
                 model.zero_grad()
-                img = img[0]
+                print(img.shape)
                 img = img.to(device)
                 out, latent_loss = model(img)
                 recon_loss = criterion(out, img)
