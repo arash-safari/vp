@@ -18,7 +18,7 @@ def get_optimizer(model, lr):
 def train(model, epoch_num, batch_size, lr, device, run_num, image_samples):
     dir = '/home/stipendiater/mohamadi/vp/video/'
     dataset = Hdf5Dataset(dir + 'datasets/kth_breakfast.h5', 'train')
-    loader = video_mnist_dataloader(dataset, batch_size, shuffle=True, num_workers=4, drop_last=True)
+    loader = video_mnist_dataloader(dataset, batch_size, shuffle=True, num_workers=1, drop_last=True)
     optimizer = get_optimizer(model, lr)
     model = model.to(device)
     # model = nn.DataParallel(model)
