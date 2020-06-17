@@ -37,9 +37,9 @@ class MnistVideoDataset(Dataset):
 class Hdf5Dataset(Dataset):
     def __init__(self, path, group_name):
         file = h5py.File(path, "r+")
-        print(file.keys())
         self.path = path
         self.frame_len = file.attrs["total"]
+        print(self.frame_len)
         self.group_name = group_name
         self.group = file[group_name]
 
