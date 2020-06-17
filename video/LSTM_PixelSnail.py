@@ -35,7 +35,7 @@ class LSTM_PixelSnail(nn.Module):
         cache = {}
         lstm_out, cells_state = self.lstm_model(input_, cells_state)
         cnn_out = self.cnn_model(lstm_out)
-        print(cnn_out)
+        # print(cnn_out)
         for i in tqdm(range(size[2])):
             for j in range(size[3]):
                 # print(i)
