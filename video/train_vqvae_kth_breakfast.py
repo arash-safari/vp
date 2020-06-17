@@ -21,7 +21,7 @@ def train(model, epoch_num, batch_size, lr, device, run_num, image_samples):
     loader = video_mnist_dataloader(dataset, batch_size, shuffle=True, num_workers=4, drop_last=True)
     optimizer = get_optimizer(model, lr)
     model = model.to(device)
-    model = nn.DataParallel(model)
+    # model = nn.DataParallel(model)
     criterion = nn.MSELoss()
     writer = SummaryWriter(log_dir='logs/{}_{}'.format(*['kth-breakfast-vqvae', run_num]))
 
