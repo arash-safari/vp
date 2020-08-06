@@ -69,8 +69,8 @@ def train(chekpoint, lstm_model, pixel_model, input_channel, loader, callback, e
                 loss += criterion(pred, inputs_[:, i + 1, :, :, :])
             preds = torch.cat([inputs_[:, -1, :, :, :].unsqueeze(dim=1),pred.unsqueeze(dim=1)],dim=1)
             for i in range(frames.shape[1] + 1 - num_frame_learn):
-                pred, cells_state = model(preds, cells_state)
-                preds = torch.cat([preds[:, -1, :, :, :].unsqueeze(dim=1), pred.unsqueeze(dim=1)], dim=1)
+                pred, cells_state = model(preds[:, -2:, :, :, :], cells_state)
+                preds = torch.cat([preds, pred.unsqueeze(dim=1)], dim=1)
                 loss += criterion(pred, inputs_[:, i + 1, :, :, :])
 
             loss.backward()
@@ -89,9 +89,9 @@ def train(chekpoint, lstm_model, pixel_model, input_channel, loader, callback, e
 
             if iter % 200 is 0:
                 writer.add_scalar('Loss/train', mse_sum / mse_n, epoch_num)
-                sample = pred[:image_samples, :, :, :]
-                sample = one_hot_to_int(sample)
-                callback(sample, frames[:image_samples, -1, :, :].to(device), epoch, iter)
+                samples = preds[:, 1:, :, :, :]
+                samples = one_hot_to_int(samples)
+                callback(samples, frames[:, -(frames.shape[1] + 1 - num_frame_learn):, :, :].to(device), epoch, iter)
 
             torch.save(model.state_dict(),
                        '../video/checkpoints/videomnist/vqvae-lstm-pixelsnail/{}/{}.pt'.format(
