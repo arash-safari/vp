@@ -37,7 +37,8 @@ def train(chekpoint, lstm_model, pixel_model, input_channel, loader, callback, e
                                                                                             str(chekpoint).zfill(5))
         model.load_state_dict(torch.load(ckpt_path))
 
-    criterion = nn.MSELoss()
+    # criterion = nn.MSELoss()
+    criterion = nn.CrossEntropyLoss()
     optimizer = get_optimizer(model, lr)
 
     writer = SummaryWriter(log_dir='logs/{}_{}'.format(*[writer_path, run_num]))
