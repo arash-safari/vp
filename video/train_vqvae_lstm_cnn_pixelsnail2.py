@@ -67,13 +67,13 @@ def train(chekpoint, lstm_model, pixel_model, input_channel, loader, callback, e
 
             for i in range(num_frame_learn +1 ):
                 pred, cells_state = model(inputs_[:, i:i + 2, :, :, :], cells_state)
-                loss += criterion(pred, one_hot_to_int(inputs_[:, i + 1, :, :, :].long()))
+                loss += criterion(pred, frames[:, i, :, :])
             preds = torch.cat([inputs_[:, -1, :, :, :].unsqueeze(dim=1),pred.unsqueeze(dim=1)],dim=1)
             num_frame_preds = frames.shape[1] + 1 - num_frame_learn
             for i in range(num_frame_preds):
                 pred, cells_state = model(preds[:, -2:, :, :, :], cells_state)
                 preds = torch.cat([preds, pred.unsqueeze(dim=1)], dim=1)
-                loss += criterion(pred, inputs_[:, i + 1, :, :, :])
+                loss += criterion(pred, frames[:, i +1+ num_frame_learn, :, :])
 
             loss.backward()
             optimizer.step()
