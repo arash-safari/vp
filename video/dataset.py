@@ -34,24 +34,48 @@ class MnistVideoDataset(Dataset):
         return self.frames[video_ind, frame_ind: frame_ind + self.frame_len, :, :], video_ind, frame_ind
 
 
-class Hdf5Dataset(Dataset):
-    def __init__(self, path, group_name):
-        file = h5py.File(path, "r+")
-        self.path = path
+class lmdb_video(Dataset):
+    def __init__(self, env_path, env_meta):
+        self.env = lmdb.open(
+            env_path,
+            max_readers=32,
+            readonly=True,
+            lock=False,
+            readahead=False,
+            meminit=False,
+        )
 
-        self.group_name = group_name
-        self.group = file[group_name]
-        self.frame_len = self.group.attrs["total"]
+        if not self.env:
+            raise IOError('Cannot open lmdb dataset', env_path)
+
+        with self.env.begin(write=False) as txn:
+            self.length = int(txn.get('length'.encode('utf-8')).decode('utf-8'))
+
+        meta = lmdb.open(
+            env_meta,
+            max_readers=32,
+            readonly=True,
+            lock=False,
+            readahead=False,
+            meminit=False,
+        )
+
+        if not meta:
+            raise IOError('Cannot open lmdb dataset', env_meta)
+
+        with meta.begin(write=False) as txn:
+            self.videos_ind  = pickle.loads(txn.get('videos_ind'.encode('utf-8')).decode('utf-8'))
+            self.frames_ind = pickle.loads(txn.get('frames_ind'.encode('utf-8')).decode('utf-8'))
 
     def __len__(self):
-        return self.frame_len
+        return self.length
 
     def __getitem__(self, i):
         if self.group == None:
             file = h5py.File(self.path, "r+")
             self.group = file[self.group_name]
-            print(f"vid_part_{i}")
-            print(np.array(self.group[f"vid_part_{i}"]).shape)
+            # print(f"vid_part_{i}")
+            # print(np.array(self.group[f"vid_part_{i}"]).shape)
         return   np.array(self.group[f"vid_part_{i}"]).astype(np.float)
 
 
