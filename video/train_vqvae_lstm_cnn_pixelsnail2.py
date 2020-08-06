@@ -31,7 +31,7 @@ def train(chekpoint, lstm_model, pixel_model, input_channel, loader, callback, e
     model = LSTM_PixelSnail2(lstm_model, pixel_model)
     model = model.to(device)
     model = nn.DataParallel(model)
-
+    num_frame_preds = 0
     if chekpoint > 0:
         ckpt_path = "../video/checkpoints/videomnist/vqvae-lstm-pixelsnail/{}/{}.pt".format(run_num,
                                                                                             str(chekpoint).zfill(5))
@@ -68,7 +68,8 @@ def train(chekpoint, lstm_model, pixel_model, input_channel, loader, callback, e
                 pred, cells_state = model(inputs_[:, i:i + 2, :, :, :], cells_state)
                 loss += criterion(pred, inputs_[:, i + 1, :, :, :])
             preds = torch.cat([inputs_[:, -1, :, :, :].unsqueeze(dim=1),pred.unsqueeze(dim=1)],dim=1)
-            for i in range(frames.shape[1] + 1 - num_frame_learn):
+            num_frame_preds = frames.shape[1] + 1 - num_frame_learn
+            for i in range(num_frame_preds):
                 pred, cells_state = model(preds[:, -2:, :, :, :], cells_state)
                 preds = torch.cat([preds, pred.unsqueeze(dim=1)], dim=1)
                 loss += criterion(pred, inputs_[:, i + 1, :, :, :])
@@ -89,8 +90,13 @@ def train(chekpoint, lstm_model, pixel_model, input_channel, loader, callback, e
 
             if iter % 200 is 0:
                 writer.add_scalar('Loss/train', mse_sum / mse_n, epoch_num)
-                samples = preds[:, 1:, :, :, :]
-                samples = one_hot_to_int(samples)
+                samples = None
+                for i in range(num_frame_preds)
+                    sample = one_hot_to_int(preds[:, i+1, :, :, :])
+                    if samples == None:
+                        samples = sample.unsqueeze(dim=1)
+                    else:
+                        samples = torch.cat([samples,sample.unsqueeze(dim=1)],dim=1)
                 callback(samples, frames[:, -(frames.shape[1] + 1 - num_frame_learn):, :, :].to(device), epoch, iter)
 
             torch.save(model.state_dict(),
