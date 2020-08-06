@@ -91,7 +91,7 @@ def train(chekpoint, lstm_model, pixel_model, input_channel, loader, callback, e
             if iter % 200 is 0:
                 writer.add_scalar('Loss/train', mse_sum / mse_n, epoch_num)
                 samples = None
-                for i in range(num_frame_preds)
+                for i in range(num_frame_preds):
                     sample = one_hot_to_int(preds[:, i+1, :, :, :])
                     if samples == None:
                         samples = sample.unsqueeze(dim=1)
