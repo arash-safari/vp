@@ -29,9 +29,9 @@ def train(chekpoint, lstm_model, pixel_model, input_channel, loader, callback, e
     writer_path = 'vqvae_videomnist_{}_00099_lstm_pixelsnail'.format(run_num)
 
     model = LSTM_PixelSnail2(lstm_model, pixel_model)
-    model = model.to(device)
     model = nn.DataParallel(model)
-    num_frame_preds = 0
+    model = model.to(device)
+
     if chekpoint > 0:
         ckpt_path = "../video/checkpoints/videomnist/vqvae-lstm-pixelsnail/{}/{}.pt".format(run_num,
                                                                                             str(chekpoint).zfill(5))
