@@ -65,14 +65,19 @@ def train(chekpoint, lstm_model, pixel_model, input_channel, loader, callback, e
             loss = 0
             model.zero_grad()
             frames = frames.to(device)
-            for i in range(num_frame_learn +1 ):
-                pred, cells_state = model(inputs_[:, i:i + 2, :, :, :], cells_state)
+            for i in range( num_frame_learn +1 ):
+                pred, cells_state = model(torch.cat[inputs_[:, i:i + 2, :, :, :],
+                                                    inputs_[:, num_frame_learn + 1, :, :, :].unsqueeze(dim=1)
+                                          ], cells_state)
+                loss += criterion(pred, frames[:, i, :, :])
 
-            preds = torch.cat([inputs_[:, -1, :, :, :].unsqueeze(dim=1),pred.unsqueeze(dim=1)],dim=1)
+            preds =inputs_[:, num_frame_learn +1, :, :, :].unsqueeze(dim=1)
             num_frame_preds = frames.shape[1]  - num_frame_learn
+
             for i in range(num_frame_preds):
-                model_input = torch.cat([preds[:, -2:, :, :, :],
-                                         inputs_[:, num_frame_learn, :, :, :].unsqueeze(dim=1)],dim=1)
+                model_input = torch.cat([preds[:, -1:, :, :, :],
+                                         inputs_[:, num_frame_learn + i + 1, :, :, :].unsqueeze(dim=1),
+                                         inputs_[:, num_frame_learn + 1, :, :, :].unsqueeze(dim=1)],dim=1)
                 pred, cells_state = model(model_input, cells_state)
                 preds = torch.cat([preds, pred.unsqueeze(dim=1)], dim=1)
                 loss += criterion(pred, frames[:, i + num_frame_learn, :, :])

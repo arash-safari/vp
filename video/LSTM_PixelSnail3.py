@@ -20,7 +20,7 @@ class LSTM_PixelSnail3(nn.Module):
     def forward(self, inputs_, cells_state):
 
         ls_input = inputs_[:, 0, :, :, :]
-        target = inputs_[:, 1, :, :, :]
+        target= inputs_[:, 1, :, :, :]
         last_frame = inputs_[:, 2, :, :, :]
 
         lstm_out, cells_state = self.lstm_model(ls_input, cells_state)
