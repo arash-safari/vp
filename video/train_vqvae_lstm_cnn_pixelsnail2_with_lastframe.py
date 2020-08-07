@@ -54,7 +54,7 @@ def train(chekpoint, lstm_model, pixel_model, input_channel, loader, callback, e
             f0 = torch.zeros(frames.shape[0], 1, input_channel, frames.shape[2], frames.shape[3])
             f0 = f0.to(device)
             inputs_.append(f0)
-            for i in range(frames.shape[1] - 1):
+            for i in range(frames.shape[1] ):
                 input_ = _to_one_hot(frames[:, i, :, :], input_channel).float()
                 input_ = input_.to(device)
 
