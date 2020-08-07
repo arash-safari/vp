@@ -24,7 +24,7 @@ class LSTM_PixelSnail3(nn.Module):
         last_frame = inputs_[:, 2, :, :, :]
 
         lstm_out, cells_state = self.lstm_model(ls_input, cells_state)
-        pixel_input = torch.cat([ls_input,last_frame],dim=0)
+        pixel_input = torch.cat([ls_input,last_frame],dim=1)
         out, _ = self.pixel_model(target, condition=pixel_input)
         return out, cells_state
 
