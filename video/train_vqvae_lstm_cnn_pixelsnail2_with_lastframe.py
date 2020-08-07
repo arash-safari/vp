@@ -77,7 +77,7 @@ def train(chekpoint, lstm_model, pixel_model, input_channel, loader, callback, e
 
             for i in range(num_frame_preds):
                 model_input = torch.cat([preds[:, -1:, :, :, :],
-                                         inputs_[:, num_frame_learn + i + 1, :, :, :].unsqueeze(dim=1),
+                                         inputs_[:, num_frame_learn + i + 2, :, :, :].unsqueeze(dim=1),
                                          inputs_[:, num_frame_learn + 1, :, :, :].unsqueeze(dim=1)],dim=1)
                 pred, cells_state = model(model_input, cells_state)
                 preds = torch.cat([preds, pred.unsqueeze(dim=1)], dim=1)
