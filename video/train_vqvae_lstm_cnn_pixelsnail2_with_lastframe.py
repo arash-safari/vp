@@ -73,7 +73,7 @@ def train(chekpoint, lstm_model, pixel_model, input_channel, loader, callback, e
                 loss += criterion(pred, frames[:, i, :, :])
 
             preds =inputs_[:, num_frame_learn +1, :, :, :].unsqueeze(dim=1)
-            num_frame_preds = frames.shape[1]  - num_frame_learn
+            num_frame_preds = frames.shape[1]  - num_frame_learn - 1
 
             for i in range(num_frame_preds):
                 model_input = torch.cat([preds[:, -1:, :, :, :],
