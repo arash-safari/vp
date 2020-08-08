@@ -81,7 +81,7 @@ def train(chekpoint, lstm_model, pixel_model, input_channel, loader, callback, e
                                          inputs_[:, num_frame_learn + 1, :, :, :].unsqueeze(dim=1)],dim=1)
                 pred, cells_state = model(model_input, cells_state)
                 preds = torch.cat([preds, pred.unsqueeze(dim=1)], dim=1)
-                loss += criterion(pred, frames[:, i + num_frame_learn, :, :])
+                loss += criterion(pred, frames[:, i + num_frame_learn + 1 , :, :])
 
             loss.backward()
             optimizer.step()
@@ -106,7 +106,7 @@ def train(chekpoint, lstm_model, pixel_model, input_channel, loader, callback, e
                         samples = sample.unsqueeze(dim=1)
                     else:
                         samples = torch.cat([samples,sample.unsqueeze(dim=1)],dim=1)
-                callback(samples, frames[:, -(frames.shape[1]  - num_frame_learn):, :, :].to(device), epoch, iter)
+                callback(samples, frames[:, -(frames.shape[1]  - num_frame_learn) +1 :, :, :].to(device), epoch, iter)
 
             torch.save(model.state_dict(),
                        '../video/checkpoints/videomnist/vqvae-lstm-pixelsnail/{}/{}.pt'.format(
