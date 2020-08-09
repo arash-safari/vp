@@ -65,7 +65,7 @@ def train(chekpoint, lstm_model, pixel_model, input_channel, loader, callback, e
             loss = 0
             model.zero_grad()
             frames = frames.to(device)
-            for i in range( num_frame_learn +1 ):
+            for i in range( num_frame_learn ):
 
                 pred, cells_state = model(torch.cat([inputs_[:, i:i + 2, :, :, :],
                                                     inputs_[:, num_frame_learn + 1, :, :, :].unsqueeze(dim=1)
