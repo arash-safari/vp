@@ -152,7 +152,7 @@ class MnistVideoCodeLMDBDataset2(Dataset):
             raise IOError('Cannot open lmdb dataset', path)
 
         with self.env.begin(write=False) as txn:
-            self.length = int(txn.get('length'.encode('utf-8')).decode('utf-8')) * (self.sample_per_video* (self.sample_per_video -1) )/2
+            self.length = int(txn.get('length'.encode('utf-8')).decode('utf-8')) * int((self.sample_per_video* (self.sample_per_video -1) )/2)
 
     def __len__(self):
         return self.length
@@ -160,7 +160,7 @@ class MnistVideoCodeLMDBDataset2(Dataset):
     def __getitem__(self, index):
         with self.env.begin(write=False) as txn:
             video_ind = int(index / self.sample_per_video)
-            frame_ind = index - video_ind * (self.sample_per_video* (self.sample_per_video -1) )/2
+            frame_ind = index - video_ind * int((self.sample_per_video* (self.sample_per_video -1) )/2)
 
             key = str(video_ind).encode('utf-8')
 
