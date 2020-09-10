@@ -34,6 +34,26 @@ class MnistVideoDataset(Dataset):
         return self.frames[video_ind, frame_ind: frame_ind + self.frame_len, :, :], video_ind, frame_ind
 
 
+class MnistVideoDataset2(Dataset):
+    def __init__(self, path, frame_len):
+        self.frame_len = int(frame_len)
+        self.frames = np.load(path)
+        self.frames = self.frames.swapaxes(0, 1).astype(np.float32)
+        self.frames[self.frames > 0] = 1.
+        frames_shape = self.frames.shape
+        videos_num = frames_shape[0]
+        video_len = frames_shape[1]
+        self.sample_per_video = video_len - frame_len + 1
+        self.length = (videos_num * self.sample_per_video * (self.sample_per_video -1) )/2
+
+    def __len__(self):
+        return self.length
+
+    def __getitem__(self, index):
+        video_ind = int(2 * index / (self.sample_per_video*(self.sample_per_video - 1)))
+        frame_ind = index - video_ind * (self.sample_per_video*(self.sample_per_video - 1))
+        return self.frames[video_ind, frame_ind: min(frame_ind + self.frame_len, self.frames.shape[1]), :, :], video_ind, frame_ind
+
 class lmdb_video(Dataset):
     def __init__(self, env_path, env_meta):
         self.env = lmdb.open(
