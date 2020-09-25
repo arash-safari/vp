@@ -94,11 +94,12 @@ class lmdb_video(Dataset):
         frames = []
         with self.env.begin(write=False) as txn:
             frame_idx = self.sections[index]
-
             for i in range(self.frames_len):
                 key = str(frame_idx + i).encode('utf-8')
                 frame = pickle.loads(txn.get(key))
                 frames.append(frame)
+        if len(frames) == 1:
+            return torch.from_numpy(frames[0])
         return torch.from_numpy(np.asarray(frames))
 
 
