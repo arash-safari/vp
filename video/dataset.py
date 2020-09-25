@@ -76,12 +76,16 @@ class lmdb_video(Dataset):
         video_idx = 0
         frame_idx = 0
         while frame_idx < len(self.frames_ind):
-            if frame_idx + self.frames_len < self.videos_ind[video_idx + 1]:
+            if (video_idx< len(self.videos_ind)):
+                if frame_idx + self.frames_len < self.videos_ind[video_idx + 1]:
+                    self.sections.append(frame_idx)
+                    frame_idx += 1
+                else:
+                    video_idx += 1
+                    frame_idx = self.videos_ind[video_idx]
+            else:
                 self.sections.append(frame_idx)
                 frame_idx += 1
-            else:
-                video_idx += 1
-                frame_idx = self.videos_ind[video_idx]
 
     def __len__(self):
         return len(self.sections)
