@@ -97,7 +97,7 @@ class lmdb_video(Dataset):
             for i in range(self.frames_len):
                 key = str(frame_idx + i).encode('utf-8')
                 frame = pickle.loads(txn.get(key))
-                frame = cv2.imdecode(frame[0], 1)
+                frame = cv2.imdecode(frame, 1)
                 frames.append(frame)
         if len(frames) == 1:
             print(frames[0].shape)
