@@ -99,7 +99,7 @@ class lmdb_video(Dataset):
                 key = str(frame_idx + i).encode('utf-8')
                 frame = pickle.loads(txn.get(key))
                 frames.append(frame)
-        return torch.from_numpy(frames)
+        return torch.from_numpy(np.asarray(frames))
 
 
 class MnistVideoCodeLMDBDataset(Dataset):
