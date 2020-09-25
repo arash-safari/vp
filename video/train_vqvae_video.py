@@ -15,8 +15,7 @@ def get_optimizer(model, lr):
     return optim.Adam(model.parameters(), lr=lr)
 
 
-def train(lmdb_database_path, model, epoch_num, batch_size, lr, device, run_num, image_samples):
-    dataset = lmdb_video(lmdb_database_path, 1)
+def train(dataset, model, epoch_num, batch_size, lr, device, run_num, image_samples):
     loader = video_loader(dataset, batch_size, shuffle=True, num_workers=1, drop_last=True)
     optimizer = get_optimizer(model, lr)
     model = model.to(device)

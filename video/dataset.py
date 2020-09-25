@@ -104,6 +104,56 @@ class lmdb_video(Dataset):
         return torch.from_numpy(np.asarray(frames))
 
 
+class lmdb_kth_running(Dataset):
+    def __init__(self, env_path, frames_len):
+        self.env = lmdb.open(
+            env_path,
+            max_readers=32,
+            readonly=True,
+            lock=False,
+            readahead=False,
+            meminit=False,
+        )
+        self.frames_len = int(frames_len)
+
+        if not self.env:
+            raise IOError('Cannot open lmdb dataset', env_path)
+
+        with self.env.begin(write=False) as txn:
+            self.videos_ind = pickle.loads(txn.get('videos_ind'.encode('utf-8')))
+            self.frames_ind = pickle.loads(txn.get('frames_ind'.encode('utf-8')))
+        self.sections = []
+        video_idx = 0
+        frame_idx = 0
+        while frame_idx < len(self.frames_ind):
+            if (video_idx + 1 < len(self.videos_ind)):
+                if frame_idx + self.frames_len < self.videos_ind[video_idx + 1]:
+                    self.sections.append(frame_idx)
+                    frame_idx += 1
+                else:
+                    video_idx += 1
+                    frame_idx = self.videos_ind[video_idx]
+            else:
+                self.sections.append(frame_idx)
+                frame_idx += 1
+
+    def __len__(self):
+        return len(self.sections)
+
+    def __getitem__(self, index):
+        frames = []
+        with self.env.begin(write=False) as txn:
+            frame_idx = self.sections[index]
+            for i in range(self.frames_len):
+                key = str(frame_idx + i).encode('utf-8')
+                frame = pickle.loads(txn.get(key))
+                frame = cv2.imdecode(frame, 1)
+                frame.transpose(2,0,1)
+                frames.append(frame)
+        if len(frames) == 1:
+            return torch.from_numpy(frames[0])
+        return torch.from_numpy(np.asarray(frames))
+
 class MnistVideoCodeLMDBDataset(Dataset):
     def __init__(self, path, frame_len):
         self.env = lmdb.open(
