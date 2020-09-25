@@ -6,7 +6,7 @@ from torch import optim, nn
 import torch
 from torchvision import utils
 from dataset import lmdb_video
-from dataloader import video_mnist_dataloader
+from dataloader import video_loader
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 
@@ -17,7 +17,7 @@ def get_optimizer(model, lr):
 
 def train(lmdb_database_path, model, epoch_num, batch_size, lr, device, run_num, image_samples):
     dataset = lmdb_video(lmdb_database_path)
-    loader = video_mnist_dataloader(dataset, batch_size, shuffle=True, num_workers=1, drop_last=True)
+    loader = video_loader(dataset, batch_size, shuffle=True, num_workers=1, drop_last=True)
     optimizer = get_optimizer(model, lr)
     model = model.to(device)
     # model = nn.DataParallel(model)

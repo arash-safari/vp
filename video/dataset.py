@@ -55,7 +55,7 @@ class MnistVideoDataset(Dataset):
 #         return self.frames[video_ind, frame_ind: min(frame_ind + self.frame_len, self.frames.shape[1]), :, :], video_ind, frame_ind
 
 class lmdb_video(Dataset):
-    def __init__(self, env_path):
+    def __init__(self, env_path, frames_len):
         self.env = lmdb.open(
             env_path,
             max_readers=32,
@@ -64,28 +64,37 @@ class lmdb_video(Dataset):
             readahead=False,
             meminit=False,
         )
+        self.frames_len = int(frames_len)
 
         if not self.env:
             raise IOError('Cannot open lmdb dataset', env_path)
 
         with self.env.begin(write=False) as txn:
-            self.length = int(txn.get('length'.encode('utf-8')).decode('utf-8'))
             self.videos_ind = pickle.loads(txn.get('videos_ind'.encode('utf-8')).decode('utf-8'))
             self.frames_ind = pickle.loads(txn.get('frames_ind'.encode('utf-8')).decode('utf-8'))
+        self.sections = []
+        video_idx = 0
+        frame_idx = 0
+        while frame_idx < len(self.frames_ind):
+            if frame_idx + self.frames_len < self.videos_ind[video_idx + 1]:
+                self.sections.append(frame_idx)
+            else:
+                video_idx += 1
+                frame_idx = self.videos_ind[video_idx]
 
     def __len__(self):
-        return self.length
+        return len(self.sections)
 
     def __getitem__(self, index):
+        frames = []
         with self.env.begin(write=False) as txn:
-            video_ind = int(index / self.sample_per_video)
-            frame_ind = index - video_ind * self.sample_per_video
+            frame_idx = self.sections[index]
 
-            key = str(video_ind).encode('utf-8')
-
-            row = pickle.loads(txn.get(key))
-
-        return torch.from_numpy(row.ids[frame_ind: frame_ind + self.frame_len]), row.video_ind, frame_ind
+            for i in range(self.frames_len):
+                key = str(frame_idx + i).encode('utf-8')
+                frame = pickle.loads(txn.get(key))
+                frames.append(frame)
+        return torch.from_numpy(frames)
 
 
 class MnistVideoCodeLMDBDataset(Dataset):
