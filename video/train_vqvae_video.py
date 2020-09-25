@@ -15,7 +15,7 @@ def get_optimizer(model, lr):
     return optim.Adam(model.parameters(), lr=lr)
 
 
-def train(dataset, model, epoch_num, batch_size, lr, device, run_num, image_samples):
+def train(dataset, model, epoch_num, batch_size, lr, device, run_num, image_samples, callback):
     loader = video_loader(dataset, batch_size, shuffle=True, num_workers=1, drop_last=True)
     optimizer = get_optimizer(model, lr)
     model = model.to(device)
@@ -63,13 +63,8 @@ def train(dataset, model, epoch_num, batch_size, lr, device, run_num, image_samp
                 # save samples to see result
 
                 out = (out > 0.5).float()
-                utils.save_image(
-                    torch.cat([sample, out], 0),
-                     '../video/samples/kth-breakfast/vqvae/{}/{}.png'.format(*[run_num, epoch]),
-                    nrow=image_samples,
-                    normalize=True,
-                    range=(-1, 1),
-                )
+                callback(sample, out)
+
                 model.train()
 
             torch.save(model.state_dict(),
