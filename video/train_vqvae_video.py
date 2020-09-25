@@ -65,7 +65,7 @@ def train(dataset, model, epoch_num, batch_size, lr, device, run_num, image_samp
                 out = (out > 0.5).float()
                 utils.save_image(
                     torch.cat([sample, out], 0),
-                    dir + 'samples/kth-breakfast/vqvae/{}/{}.png'.format(*[run_num, epoch]),
+                     '../video/samples/kth-breakfast/vqvae/{}/{}.png'.format(*[run_num, epoch]),
                     nrow=image_samples,
                     normalize=True,
                     range=(-1, 1),
@@ -73,4 +73,4 @@ def train(dataset, model, epoch_num, batch_size, lr, device, run_num, image_samp
                 model.train()
 
             torch.save(model.state_dict(),
-                       dir + 'checkpoints/kth-breakfast/vqvae/{}/{}.pt'.format(*[run_num, str(epoch).zfill(5)]))
+                        '../video/checkpoints/kth-breakfast/vqvae/{}/{}.pt'.format(*[run_num, str(epoch).zfill(5)]))
