@@ -5,7 +5,7 @@ from m_vqvae import VQVAE_1
 from torch import optim, nn
 import torch
 from torchvision import utils
-from dataset import Hdf5Dataset
+from dataset import lmdb_video
 from dataloader import video_mnist_dataloader
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
@@ -15,9 +15,8 @@ def get_optimizer(model, lr):
     return optim.Adam(model.parameters(), lr=lr)
 
 
-def train(model, epoch_num, batch_size, lr, device, run_num, image_samples):
-    dir = '/home/stipendiater/mohamadi/vp/video/'
-    dataset = Hdf5Dataset(dir + 'datasets/kth_breakfast.h5', 'train')
+def train(lmdb_database_path, model, epoch_num, batch_size, lr, device, run_num, image_samples):
+    dataset = lmdb_video(lmdb_database_path)
     loader = video_mnist_dataloader(dataset, batch_size, shuffle=True, num_workers=1, drop_last=True)
     optimizer = get_optimizer(model, lr)
     model = model.to(device)

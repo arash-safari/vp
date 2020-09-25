@@ -55,7 +55,7 @@ class MnistVideoDataset(Dataset):
 #         return self.frames[video_ind, frame_ind: min(frame_ind + self.frame_len, self.frames.shape[1]), :, :], video_ind, frame_ind
 
 class lmdb_video(Dataset):
-    def __init__(self, env_path, env_meta):
+    def __init__(self, env_path):
         self.env = lmdb.open(
             env_path,
             max_readers=32,
@@ -70,33 +70,22 @@ class lmdb_video(Dataset):
 
         with self.env.begin(write=False) as txn:
             self.length = int(txn.get('length'.encode('utf-8')).decode('utf-8'))
-
-        meta = lmdb.open(
-            env_meta,
-            max_readers=32,
-            readonly=True,
-            lock=False,
-            readahead=False,
-            meminit=False,
-        )
-
-        if not meta:
-            raise IOError('Cannot open lmdb dataset', env_meta)
-
-        with meta.begin(write=False) as txn:
             self.videos_ind = pickle.loads(txn.get('videos_ind'.encode('utf-8')).decode('utf-8'))
             self.frames_ind = pickle.loads(txn.get('frames_ind'.encode('utf-8')).decode('utf-8'))
 
     def __len__(self):
         return self.length
 
-    def __getitem__(self, i):
-        if self.group == None:
-            file = h5py.File(self.path, "r+")
-            self.group = file[self.group_name]
-            # print(f"vid_part_{i}")
-            # print(np.array(self.group[f"vid_part_{i}"]).shape)
-        return np.array(self.group[f"vid_part_{i}"]).astype(np.float)
+    def __getitem__(self, index):
+        with self.env.begin(write=False) as txn:
+            video_ind = int(index / self.sample_per_video)
+            frame_ind = index - video_ind * self.sample_per_video
+
+            key = str(video_ind).encode('utf-8')
+
+            row = pickle.loads(txn.get(key))
+
+        return torch.from_numpy(row.ids[frame_ind: frame_ind + self.frame_len]), row.video_ind, frame_ind
 
 
 class MnistVideoCodeLMDBDataset(Dataset):
@@ -152,7 +141,8 @@ class MnistVideoCodeLMDBDataset2(Dataset):
             raise IOError('Cannot open lmdb dataset', path)
 
         with self.env.begin(write=False) as txn:
-            self.length = int(txn.get('length'.encode('utf-8')).decode('utf-8')) * int((self.sample_per_video* (self.sample_per_video +1) )/2)
+            self.length = int(txn.get('length'.encode('utf-8')).decode('utf-8')) * int(
+                (self.sample_per_video * (self.sample_per_video + 1)) / 2)
 
     def __len__(self):
         return self.length
@@ -160,10 +150,11 @@ class MnistVideoCodeLMDBDataset2(Dataset):
     def __getitem__(self, index):
         with self.env.begin(write=False) as txn:
             video_ind = int(index / self.sample_per_video)
-            frame_ind = index - video_ind * int((self.sample_per_video* (self.sample_per_video +1) )/2)
+            frame_ind = index - video_ind * int((self.sample_per_video * (self.sample_per_video + 1)) / 2)
 
             key = str(video_ind).encode('utf-8')
 
             row = pickle.loads(txn.get(key))
 
-        return torch.from_numpy(row.ids[frame_ind: min(frame_ind + self.frame_len,row.ids.shape[0])]), row.video_ind, frame_ind
+        return torch.from_numpy(
+            row.ids[frame_ind: min(frame_ind + self.frame_len, row.ids.shape[0])]), row.video_ind, frame_ind
