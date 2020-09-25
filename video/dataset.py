@@ -70,8 +70,8 @@ class lmdb_video(Dataset):
             raise IOError('Cannot open lmdb dataset', env_path)
 
         with self.env.begin(write=False) as txn:
-            self.videos_ind = pickle.loads(txn.get('videos_ind'.encode('utf-8')).decode('utf-8'))
-            self.frames_ind = pickle.loads(txn.get('frames_ind'.encode('utf-8')).decode('utf-8'))
+            self.videos_ind = pickle.loads(txn.get('videos_ind'.encode('utf-8')))
+            self.frames_ind = pickle.loads(txn.get('frames_ind'.encode('utf-8')))
         self.sections = []
         video_idx = 0
         frame_idx = 0
