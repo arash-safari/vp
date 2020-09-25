@@ -15,8 +15,8 @@ def get_optimizer(model, lr):
     return optim.Adam(model.parameters(), lr=lr)
 
 
-def train(lmdb_database_path, model, frames_len, epoch_num, batch_size, lr, device, run_num, image_samples):
-    dataset = lmdb_video(lmdb_database_path, frames_len)
+def train(lmdb_database_path, model, epoch_num, batch_size, lr, device, run_num, image_samples):
+    dataset = lmdb_video(lmdb_database_path, 1)
     loader = video_loader(dataset, batch_size, shuffle=True, num_workers=1, drop_last=True)
     optimizer = get_optimizer(model, lr)
     model = model.to(device)
@@ -34,7 +34,7 @@ def train(lmdb_database_path, model, frames_len, epoch_num, batch_size, lr, devi
             # for img in video:
             # video = video.permute(0,3,1,2)
             model.zero_grad()
-            video = video.float().to(device)
+            video = video.float().to(device)[0,:,:]
             out, latent_loss = model(video)
             recon_loss = criterion(out, video)
             latent_loss = latent_loss.mean()
