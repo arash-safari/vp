@@ -53,6 +53,7 @@ def save_lmdb(videos_dir, lmdb_path):
         txn.put(key.encode('utf-8'), pickle.dumps(videos_ind))
         key = "frames_ind"
         txn.put(key.encode('utf-8'), pickle.dumps(frames_ind))
+
         fi = 0
         for vid_ind, frames in enumerate(vids):
             for frame in frames:
