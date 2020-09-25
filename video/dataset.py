@@ -99,6 +99,7 @@ class lmdb_video(Dataset):
                 frame = pickle.loads(txn.get(key))
                 frames.append(frame)
         if len(frames) == 1:
+            print(frames[0].shape)
             return torch.from_numpy(frames[0])
         return torch.from_numpy(np.asarray(frames))
 
