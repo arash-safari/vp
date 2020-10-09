@@ -149,7 +149,7 @@ class lmdb_kth_running(Dataset):
                 frame = pickle.loads(txn.get(key))
                 frame = cv2.imdecode(frame, 1)
                 # print(frame.shape)
-                frame = frame[:,:,0:1]
+                frame = frame[:,:,0:1].astype(np.float16)/256
                 frame = frame.transpose(2,0,1)
                 # print(frame.shape)
                 frames.append(frame)
