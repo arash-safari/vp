@@ -62,7 +62,7 @@ def train(dataset, model, epoch_num, batch_size, lr, device, run_num, image_samp
                     out, _ = model(sample)
                 # save samples to see result
 
-                out = (out > 0.5).float()
+                # out = (out > 0.5).float()
                 callback(sample, out, epoch)
 
                 model.train()
