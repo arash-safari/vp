@@ -15,12 +15,15 @@ def get_optimizer(model, lr):
     return optim.Adam(model.parameters(), lr=lr)
 
 
-def train(dataset, model, epoch_num, batch_size, lr, device, run_num, image_samples, callback):
+def train(dataset, model, epoch_num, batch_size, lr, device, run_num, image_samples, callback, loss_func):
     loader = video_loader(dataset, batch_size, shuffle=True, num_workers=1, drop_last=True)
     optimizer = get_optimizer(model, lr)
     model = model.to(device)
     # model = nn.DataParallel(model)
-    criterion = nn.L1Loss()
+    if loss_func=="mse":
+        criterion = nn.MSELoss()
+    elif loss_func=="l1":
+        criterion = nn.L1Loss()
     writer = SummaryWriter(log_dir='logs/{}_{}'.format(*['kth-breakfast-vqvae', run_num]))
 
     for epoch in range(epoch_num):
