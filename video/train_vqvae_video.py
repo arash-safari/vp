@@ -16,7 +16,7 @@ def get_optimizer(model, lr):
 
 
 def train(dataset, model, epoch_num, batch_size, lr, device, run_num, image_samples, callback, loss_func):
-    loader = video_loader(dataset, batch_size, shuffle=True, num_workers=1, drop_last=True)
+    loader = video_loader(dataset, batch_size, shuffle=False, num_workers=1, drop_last=True)
     optimizer = get_optimizer(model, lr)
     model = model.to(device)
     # model = nn.DataParallel(model)
