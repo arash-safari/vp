@@ -20,7 +20,7 @@ def train(dataset, model, epoch_num, batch_size, lr, device, run_num, image_samp
     optimizer = get_optimizer(model, lr)
     model = model.to(device)
     # model = nn.DataParallel(model)
-    criterion = nn.SmoothL1Loss()
+    criterion = nn.L1Loss()
     writer = SummaryWriter(log_dir='logs/{}_{}'.format(*['kth-breakfast-vqvae', run_num]))
 
     for epoch in range(epoch_num):
