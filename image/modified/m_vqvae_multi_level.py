@@ -192,8 +192,8 @@ class VQVAE_ML(nn.Module):
             n_res_block=2,
             n_res_channel=16,
             embed_dim=16,
-            n_level=1,
-            n_embed = 512,
+            n_level=4,
+            n_embed = 16,
             decay=0.80,
             stride=4,
     ):
