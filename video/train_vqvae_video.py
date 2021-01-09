@@ -1,5 +1,4 @@
 import sys
-
 sys.path.append('../image/modified')
 from m_vqvae import VQVAE_1
 from torch import optim, nn
@@ -9,13 +8,17 @@ from dataset import lmdb_video
 from dataloader import video_loader
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
-
+import os
 
 def get_optimizer(model, lr):
     return optim.Adam(model.parameters(), lr=lr)
 
 
 def train(dataset, model, epoch_num, batch_size, lr, device, run_num, image_samples, callback, loss_func):
+    directory = '../video/checkpoints/kth-breakfast/vqvae/{}'.format(run_num)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
     loader = video_loader(dataset, batch_size, shuffle=False, num_workers=1, drop_last=True)
     optimizer = get_optimizer(model, lr)
     model = model.to(device)
@@ -71,4 +74,4 @@ def train(dataset, model, epoch_num, batch_size, lr, device, run_num, image_samp
                 model.train()
 
             torch.save(model.state_dict(),
-                        '../video/checkpoints/kth-breakfast/vqvae/{}/{}.pt'.format(*[run_num, str(epoch).zfill(5)]))
+                        '{}/{}.pt'.format(*[directory, str(epoch).zfill(5)]))

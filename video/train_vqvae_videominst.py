@@ -50,8 +50,8 @@ def train(model, epoch_num, batch_size, lr, device, run_num, image_samples):
             if iter % 200 is 0:
                 loader.set_description(
                     (
-                        'iter: {iter + 1}; mse: {recon_loss.item():.5f}; '+
-                        f'latent: {latent_loss.item():.3f}; avg mse: {mse_sum / mse_n:.5f}; '+
+                        'iter: {iter + 1}; mse: {recon_loss.item():.5f}; '
+                        f'latent: {latent_loss.item():.3f}; avg mse: {mse_sum / mse_n:.5f}; '
                         f'lr: {lr:.5f}'
                     )
                 )
