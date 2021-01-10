@@ -14,12 +14,12 @@ def get_optimizer(model, lr):
     return optim.Adam(model.parameters(), lr=lr)
 
 
-def train(dataset, model, epoch_num, batch_size, lr, device, run_num, image_samples, callback, loss_func):
+def train(dataset, model, epoch_num, batch_size, lr, device, run_num, image_samples, callback, loss_func, shuffle):
     directory = '../video/checkpoints/kth-breakfast/vqvae/{}'.format(run_num)
     if not os.path.exists(directory):
         os.makedirs(directory)
 
-    loader = video_loader(dataset, batch_size, shuffle=False, num_workers=1, drop_last=True)
+    loader = video_loader(dataset, batch_size, shuffle=shuffle, num_workers=1, drop_last=True)
     optimizer = get_optimizer(model, lr)
     model = model.to(device)
     # model = nn.DataParallel(model)
