@@ -114,10 +114,16 @@ class Taylor_VQVAE(nn.Module):
         out = quant_t
         outs = []
         for i in range(self.n_predic):
-            end = sum(self.vqvae_chanel_array[1:min(i+2,self.n_predic)])
             cshape = cond_mat.shape
+
             condition = torch.zeros(cshape[0],sum(self.vqvae_chanel_array[1:]),cshape[2],cshape[3])
-            condition[:,:end,:,:] = cond_mat[:,:end,:,:]
+            condition[:, :self.vqvae_chanel_array[1], :, :] = cond_mat[:, :self.vqvae_chanel_array[1], :, :]
+            ratio = float(i)/self.n_predic
+            for j in range(1,i+1):
+                start= self.vqvae_chanel_array[min(j , self.n_predic)]
+                end = self.vqvae_chanel_array[min(j + 1, self.n_predic)]
+                condition[:, start:end, :, :] = cond_mat[:, start:end, :, :]*(ratio**j)
+
             for resblock in self.pixel_resblocks:
                 out = resblock(out, condition=condition)
 
